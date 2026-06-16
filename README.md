@@ -85,6 +85,10 @@ Errors use the same shape:
 Ships as host-specific **MSI** packages (built with WiX). Revit and AutoCAD have independent MSIs;
 future Rhino packaging should follow the same shape.
 
+## License
+
+Apache-2.0. See [LICENSE](LICENSE).
+
 ## Design principles
 
 SOLID; functional core / imperative shell; ports/adapters; modular tool modules; domain-first tool
