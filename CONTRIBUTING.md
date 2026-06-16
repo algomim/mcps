@@ -12,6 +12,9 @@ implementation.
 Do not report security vulnerabilities in public issues or pull requests. Follow
 [SECURITY.md](SECURITY.md) instead.
 
+Public repository rules and maintainer guardrails are documented in
+[docs/PUBLIC_REPO.md](docs/PUBLIC_REPO.md).
+
 ## Design contract
 
 This codebase favors a **small, clean, extensible core** with a typed Revit tool catalog. Every change is held to:
@@ -79,12 +82,14 @@ standard. `feat:` means minor, `fix:` means patch, and `feat!:`/`fix!:` means ma
 Before tagging a release, sync version metadata from the repository root:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/version.ps1 -Version 0.1.9
+powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/version.ps1 -Version X.Y.Z
 ```
 
 This updates `Directory.Build.props`, WiX MSI product versions, and AutoCAD `PackageContents.xml`
 `AppVersion` values together. CI runs the same script in check mode, and release tags must match the
 synced version using `vX.Y.Z` format.
+
+See [docs/RELEASES.md](docs/RELEASES.md) for the public release checklist and artifact naming.
 
 ## Before you push
 

@@ -35,10 +35,10 @@ Installer edge-case behavior:
 GitHub releases should publish host MSI assets:
 
 ```text
-revit-mcp-vX.Y.Z.msi
-autocad-mcp-vX.Y.Z.msi
-revit-mcp-vX.Y.Z.msi.sha256
-autocad-mcp-vX.Y.Z.msi.sha256
+revit-mcp-X.Y.Z.msi
+autocad-mcp-X.Y.Z.msi
+revit-mcp-X.Y.Z.msi.sha256
+autocad-mcp-X.Y.Z.msi.sha256
 ```
 
 Version metadata is release-gated. Before creating a tag, run:
@@ -61,8 +61,8 @@ name (`vX.Y.Z`) matches the synced metadata before building installers.
 Installed host add-ins check GitHub Releases for newer host-specific MSI assets:
 
 ```text
-revit-mcp-vX.Y.Z.msi
-autocad-mcp-vX.Y.Z.msi
+revit-mcp-X.Y.Z.msi
+autocad-mcp-X.Y.Z.msi
 ```
 
 There is no separate updater executable in the first update flow. Revit and AutoCAD share the common
@@ -100,3 +100,5 @@ installer/
     rhino/
   bundles/
 ```
+
+See [Release Process](RELEASES.md) for the public release checklist.
