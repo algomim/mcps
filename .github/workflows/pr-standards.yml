@@ -15,9 +15,15 @@ jobs:
       - name: Require linked issue
         shell: bash
         env:
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           PR_BODY: ${{ github.event.pull_request.body }}
           PR_AUTHOR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
         run: |
+          if [[ "$PR_AUTHOR" == "dependabot[bot]" ]]; then
+            echo "Dependabot PR; issue-first check skipped."
+            exit 0
+          fi
+
           if [[ "$PR_AUTHOR_ASSOCIATION" == "OWNER" || "$PR_AUTHOR_ASSOCIATION" == "MEMBER" || "$PR_AUTHOR_ASSOCIATION" == "COLLABORATOR" ]]; then
             echo "Trusted maintainer PR; issue-first check skipped."
             exit 0
