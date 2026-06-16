@@ -34,4 +34,37 @@ public sealed class UpdateVersionTests
         Assert.Equal("0.1.9", update.LatestVersion);
         Assert.Contains("No published GitHub release", update.Message);
     }
+
+    [Fact]
+    public void UpdateInstallerLauncherReportsMissingHelper()
+    {
+        var update = ReleaseUpdateInfo.UpdateAvailable(
+            "0.1.9",
+            "0.1.10",
+            "https://github.com/algomim/mcps/releases/tag/v0.1.10",
+            "https://github.com/algomim/mcps/releases/download/v0.1.10/revit-mcp-0.1.10.msi",
+            "revit-mcp-0.1.10.msi");
+
+        var missingDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        var result = UpdateInstallerLauncher.Launch(update, "Revit", missingDirectory);
+
+        Assert.False(result.Started);
+        Assert.Contains("Updater helper was not found", result.Message);
+    }
+
+    [Fact]
+    public void UpdateInstallerLauncherRequiresHostSpecificMsi()
+    {
+        var update = ReleaseUpdateInfo.UpdateAvailable(
+            "0.1.9",
+            "0.1.10",
+            "https://github.com/algomim/mcps/releases/tag/v0.1.10",
+            null,
+            null);
+
+        var result = UpdateInstallerLauncher.Launch(update, "Revit", Path.GetTempPath());
+
+        Assert.False(result.Started);
+        Assert.Contains("No host-specific MSI", result.Message);
+    }
 }

@@ -162,15 +162,23 @@ public sealed class AutoCadMcpApp : IExtensionApplication
                 return;
             }
 
-            var targetUrl = update.InstallerUrl ?? update.ReleaseUrl;
             var installerText = update.InstallerName is null
-                ? "Opening the release page so you can choose the installer."
-                : $"Opening installer download: {update.InstallerName}";
-
+                ? "No host-specific MSI was found. The release page can be opened instead."
+                : $"Installer: {update.InstallerName}";
             AutoCadApplication.ShowAlertDialog(
                 $"autocad-mcp {update.LatestVersion} is available. You have {update.CurrentVersion}.\n\n" +
-                $"{installerText}\n\nClose AutoCAD before running the MSI.");
-            OpenUrl(targetUrl);
+                $"{installerText}\n\nThe installer will download now and run automatically after AutoCAD closes.");
+
+            var launch = UpdateInstallerLauncher.Launch(update, "AutoCAD");
+            if (launch.Started)
+            {
+                AutoCadApplication.ShowAlertDialog(launch.Message);
+                return;
+            }
+
+            AutoCadApplication.ShowAlertDialog(
+                $"{launch.Message}\n\nOpening the release page so you can run the MSI manually.");
+            OpenUrl(update.InstallerUrl ?? update.ReleaseUrl);
         }
         catch (System.Exception ex)
         {
