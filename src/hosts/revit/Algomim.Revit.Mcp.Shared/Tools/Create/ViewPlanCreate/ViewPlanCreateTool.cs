@@ -14,7 +14,7 @@ internal sealed class ViewPlanCreateTool : RevitPlannedWriteToolBase<ViewPlanCre
     private ViewPlanCreateTool(IUiThreadDispatcher dispatcher, IRevitDocumentContextStore documentContextStore, RevitViewPlanCreateExecutor executor)
         : base(dispatcher, documentContextStore) => _executor = executor;
 
-    public override string Name => "create_view_plans";
+    public override string Name => "view_create_plans";
     public override string Description => "Create floor or ceiling plan views from level ids.";
     public override JsonElement InputSchema { get; } = Schema.From(new
     {
@@ -22,7 +22,7 @@ internal sealed class ViewPlanCreateTool : RevitPlannedWriteToolBase<ViewPlanCre
         properties = new { names = ArrayOf("string"), levelIds = ArrayOf("integer"), ceilingPlans = ArrayOf("boolean") },
         required = new[] { "names", "levelIds", "ceilingPlans" },
     });
-    public override ToolMetadata Metadata { get; } = new("create_view_plans", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create floor or ceiling plan views from level ids.");
+    public override ToolMetadata Metadata { get; } = new("view_create_plans", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create floor or ceiling plan views from level ids.");
 
     public static IMcpTool Create(RevitToolServices services)
         => new ViewPlanCreateTool(services.Dispatcher, services.DocumentContextStore, new RevitViewPlanCreateExecutor());

@@ -48,7 +48,7 @@ Typed tools use `lower_snake_case` names with a domain prefix. Current domains:
 - `workset_*` / `worksharing_*`
 - `graphics_*`
 - `selection_*`
-- `create_*`
+- create operations under their target domain, such as `grid_create`, `sheet_create`, and `view_create_*`
 - `export_*`
 
 Public ordering and registration live in each host adapter's tool catalog.
@@ -56,9 +56,8 @@ Revit domain module ordering lives in
 `src/hosts/revit/Algomim.Revit.Mcp.Shared/Tools/Composition/RevitToolModuleRegistry.cs`.
 Adding a new typed tool should not require transport, dispatcher, or app startup changes.
 
-Canonical create names are moving to domain-first aliases such as `level_create`, `grid_create`,
-`sheet_create`, `schedule_create`, and `tag_create`. Existing `create_*` names remain available
-while clients migrate.
+Create tools use domain-first names such as `level_create`, `grid_create`, `sheet_create`,
+`schedule_create`, `tag_create`, and `view_create_plans`.
 
 Target capability coverage is represented as explicit typed tools with stable schemas.
 
@@ -162,7 +161,7 @@ Tools/<Domain>/<Feature>/
   Revit<Domain><Feature>Executor.cs
 ```
 
-This keeps argument parsing, pure planning, and Revit side effects separated. `create_grids` is the
+This keeps argument parsing, pure planning, and Revit side effects separated. `grid_create` is the
 first migrated example of this pattern.
 
 Tool modules are composed through small host-specific service bags and catalog builders such as

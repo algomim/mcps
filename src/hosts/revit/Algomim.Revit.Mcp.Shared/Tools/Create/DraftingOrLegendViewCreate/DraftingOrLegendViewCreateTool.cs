@@ -14,7 +14,7 @@ internal sealed class DraftingOrLegendViewCreateTool : RevitPlannedWriteToolBase
     private DraftingOrLegendViewCreateTool(IUiThreadDispatcher dispatcher, IRevitDocumentContextStore documentContextStore, RevitDraftingOrLegendViewCreateExecutor executor)
         : base(dispatcher, documentContextStore) => _executor = executor;
 
-    public override string Name => "create_drafting_or_legend_views";
+    public override string Name => "view_create_drafting_or_legend";
     public override string Description => "Create drafting views or duplicate an existing legend view.";
     public override JsonElement InputSchema { get; } = Schema.From(new
     {
@@ -22,7 +22,7 @@ internal sealed class DraftingOrLegendViewCreateTool : RevitPlannedWriteToolBase
         properties = new { names = ArrayOf("string"), draftingViews = ArrayOf("boolean") },
         required = new[] { "names", "draftingViews" },
     });
-    public override ToolMetadata Metadata { get; } = new("create_drafting_or_legend_views", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create drafting views or duplicate an existing legend view.");
+    public override ToolMetadata Metadata { get; } = new("view_create_drafting_or_legend", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create drafting views or duplicate an existing legend view.");
 
     public static IMcpTool Create(RevitToolServices services)
         => new DraftingOrLegendViewCreateTool(services.Dispatcher, services.DocumentContextStore, new RevitDraftingOrLegendViewCreateExecutor());

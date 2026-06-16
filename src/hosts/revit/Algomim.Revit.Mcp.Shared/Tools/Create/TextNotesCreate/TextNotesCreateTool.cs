@@ -14,7 +14,7 @@ internal sealed class TextNotesCreateTool : RevitPlannedWriteToolBase<TextNotesC
     private TextNotesCreateTool(IUiThreadDispatcher dispatcher, IRevitDocumentContextStore documentContextStore, RevitTextNotesCreateExecutor executor)
         : base(dispatcher, documentContextStore) => _executor = executor;
 
-    public override string Name => "create_text_notes";
+    public override string Name => "view_create_text_notes";
     public override string Description => "Create text notes in a view.";
     public override JsonElement InputSchema { get; } = Schema.From(new
     {
@@ -22,7 +22,7 @@ internal sealed class TextNotesCreateTool : RevitPlannedWriteToolBase<TextNotesC
         properties = new { viewId = new { type = "integer" }, texts = ArrayOf("string"), x = ArrayOf("number"), y = ArrayOf("number"), z = ArrayOf("number") },
         required = new[] { "viewId", "texts", "x", "y", "z" },
     });
-    public override ToolMetadata Metadata { get; } = new("create_text_notes", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create text notes in a view.");
+    public override ToolMetadata Metadata { get; } = new("view_create_text_notes", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create text notes in a view.");
 
     public static IMcpTool Create(RevitToolServices services)
         => new TextNotesCreateTool(services.Dispatcher, services.DocumentContextStore, new RevitTextNotesCreateExecutor());

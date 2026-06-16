@@ -14,7 +14,7 @@ internal sealed class LevelCreateTool : RevitPlannedWriteToolBase<LevelCreatePla
     private LevelCreateTool(IUiThreadDispatcher dispatcher, IRevitDocumentContextStore documentContextStore, RevitLevelCreateExecutor executor)
         : base(dispatcher, documentContextStore) => _executor = executor;
 
-    public override string Name => "create_levels";
+    public override string Name => "level_create";
     public override string Description => "Create levels from names and elevations in feet.";
     public override JsonElement InputSchema { get; } = Schema.From(new
     {
@@ -22,7 +22,7 @@ internal sealed class LevelCreateTool : RevitPlannedWriteToolBase<LevelCreatePla
         properties = new { names = ArrayOf("string"), elevations = ArrayOf("number") },
         required = new[] { "names", "elevations" },
     });
-    public override ToolMetadata Metadata { get; } = new("create_levels", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create levels from names and elevations in feet.");
+    public override ToolMetadata Metadata { get; } = new("level_create", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create levels from names and elevations in feet.");
 
     public static IMcpTool Create(RevitToolServices services)
         => new LevelCreateTool(services.Dispatcher, services.DocumentContextStore, new RevitLevelCreateExecutor());

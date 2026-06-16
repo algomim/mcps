@@ -14,7 +14,7 @@ internal sealed class ViewSectionCreateTool : RevitPlannedWriteToolBase<ViewSect
     private ViewSectionCreateTool(IUiThreadDispatcher dispatcher, IRevitDocumentContextStore documentContextStore, RevitViewSectionCreateExecutor executor)
         : base(dispatcher, documentContextStore) => _executor = executor;
 
-    public override string Name => "create_view_sections";
+    public override string Name => "view_create_sections";
     public override string Description => "Create section or detail views from base line, depth and height.";
     public override JsonElement InputSchema { get; } = Schema.From(new
     {
@@ -34,7 +34,7 @@ internal sealed class ViewSectionCreateTool : RevitPlannedWriteToolBase<ViewSect
         },
         required = new[] { "names", "startX", "startY", "startZ", "endX", "endY", "endZ", "depths", "heights", "detailViews" },
     });
-    public override ToolMetadata Metadata { get; } = new("create_view_sections", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create section or detail views from base line, depth and height.");
+    public override ToolMetadata Metadata { get; } = new("view_create_sections", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create section or detail views from base line, depth and height.");
 
     public static IMcpTool Create(RevitToolServices services)
         => new ViewSectionCreateTool(services.Dispatcher, services.DocumentContextStore, new RevitViewSectionCreateExecutor());

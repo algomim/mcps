@@ -17,7 +17,7 @@ internal sealed class GridCreateTool : RevitWriteToolBase
         RevitGridCreateExecutor executor)
         : base(dispatcher, documentContextStore) => _executor = executor;
 
-    public override string Name => "create_grids";
+    public override string Name => "grid_create";
     public override string Description => "Create grid lines from names and start/end XYZ arrays.";
     public override JsonElement InputSchema { get; } = Schema.From(new
     {
@@ -34,7 +34,7 @@ internal sealed class GridCreateTool : RevitWriteToolBase
         },
         required = new[] { "names", "startX", "startY", "startZ", "endX", "endY", "endZ" },
     });
-    public override ToolMetadata Metadata { get; } = new("create_grids", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create grid lines from names and start/end XYZ arrays.");
+    public override ToolMetadata Metadata { get; } = new("grid_create", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create grid lines from names and start/end XYZ arrays.");
 
     public static IMcpTool Create(RevitToolServices services)
         => new GridCreateTool(services.Dispatcher, services.DocumentContextStore, new RevitGridCreateExecutor());

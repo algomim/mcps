@@ -46,8 +46,6 @@ public static class RevitToolCatalog
             tools.AddRange(module.CreateTools(services));
         }
 
-        AddCanonicalCreateAliases(tools);
-
         // Backward-compatible legacy names.
         tools.Add(scriptExecute);
         tools.Add(discoverApi);
@@ -66,26 +64,4 @@ public static class RevitToolCatalog
             throw new InvalidOperationException($"Duplicate MCP tool name: {duplicate.Key}");
     }
 
-    private static void AddCanonicalCreateAliases(List<IMcpTool> tools)
-    {
-        AddAlias(tools, "grid_create", "Canonical domain-first alias for create_grids.", "create_grids");
-        AddAlias(tools, "level_create", "Canonical domain-first alias for create_levels.", "create_levels");
-        AddAlias(tools, "view_create_plans", "Canonical domain-first alias for create_view_plans.", "create_view_plans");
-        AddAlias(tools, "view_create_3ds", "Canonical domain-first alias for create_view_3ds.", "create_view_3ds");
-        AddAlias(tools, "view_create_sections", "Canonical domain-first alias for create_view_sections.", "create_view_sections");
-        AddAlias(tools, "sheet_create", "Canonical domain-first alias for create_sheets.", "create_sheets");
-        AddAlias(tools, "schedule_create", "Canonical domain-first alias for create_schedule.", "create_schedule");
-        AddAlias(tools, "view_create_drafting_or_legend", "Canonical domain-first alias for create_drafting_or_legend_views.", "create_drafting_or_legend_views");
-        AddAlias(tools, "view_create_text_notes", "Canonical domain-first alias for create_text_notes.", "create_text_notes");
-        AddAlias(tools, "view_create_room_elevations", "Canonical domain-first alias for create_room_elevation_views.", "create_room_elevation_views");
-        AddAlias(tools, "tag_create", "Canonical domain-first alias for create_tags.", "create_tags");
-    }
-
-    private static void AddAlias(List<IMcpTool> tools, string name, string description, string targetName)
-    {
-        var target = tools.FirstOrDefault(tool => tool.Name == targetName)
-            ?? throw new InvalidOperationException($"Cannot create alias '{name}'. Target tool '{targetName}' was not registered.");
-
-        tools.Add(new McpToolAlias(name, description, target));
-    }
 }

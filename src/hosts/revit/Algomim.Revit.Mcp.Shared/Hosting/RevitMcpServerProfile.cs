@@ -14,7 +14,7 @@ internal static class RevitMcpServerProfile
         "geometry, view, sheet, schedule, model analysis, workset/worksharing, graphics, selection, modify, create, and export.\n" +
         "Use tools/list for the exact active schema; common examples include document_get_info, document_switch_context, " +
         "category_search, element_get_info, parameter_list, geometry_get_bounding_boxes, graphics_set_element_overrides, " +
-        "element_move, create_sheets, create_schedule, create_tags, export_pdf, and export_cad.\n" +
+        "element_move, sheet_create, schedule_create, tag_create, export_pdf, and export_cad.\n" +
         "Low-level primitives:\n" +
         "- script_execute (legacy alias: execute-script): run C# method body against the active document. " +
         "Args: { code, mode?, params? }. mode='write' wraps the run in a transaction. In scope: doc, uidoc, " +

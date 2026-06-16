@@ -21,8 +21,8 @@ Common contracts live in `src/common/Algomim.Aec.Mcp.*`; host adapters live unde
 AutoCAD follows the same host-adapter shape with C#/.NET API-first tools and no Python/LISP/SCR
 foundation.
 
-Current visible Revit MCP names: 63 original typed tool names, 11 domain-first canonical create
-aliases, plus 2 backward-compatible legacy aliases.
+Current visible Revit MCP names use one canonical `domain_action_object` style, plus 2
+backward-compatible low-level aliases.
 
 Representative typed tools:
 
@@ -37,13 +37,13 @@ material_get_layers
 geometry_get_locations, geometry_get_bounding_boxes, geometry_get_host_ids, geometry_get_boundary_lines
 view_get_active, view_list_elements, view_isolate_elements
 sheet_get_contents, sheet_set_revisions, sheet_place_views
-schedule_get_info, schedule_create, create_schedule
+schedule_get_info, schedule_create
 model_list_warnings, document_get_units, workset_list, workset_get_for_elements
 graphics_get_element_overrides, graphics_get_view_filters, graphics_set_element_overrides
 selection_get, selection_set
 element_move, element_rotate, element_copy, element_delete
 grid_create, level_create, sheet_create, tag_create
-create_grids, create_levels, create_view_plans, create_view_3ds, create_sheets, create_tags
+view_create_plans, view_create_3ds, view_create_sections, view_create_text_notes
 export_pdf, export_cad
 ```
 

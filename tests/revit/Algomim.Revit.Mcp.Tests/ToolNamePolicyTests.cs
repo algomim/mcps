@@ -11,7 +11,17 @@ public class ToolNamePolicyTests
     {
         Assert.True(ToolNamePolicy.Validate("element_move").IsValid);
         Assert.True(ToolNamePolicy.Validate("view_capture_snapshot").IsValid);
+        Assert.True(ToolNamePolicy.Validate("level_create").IsValid);
+        Assert.True(ToolNamePolicy.Validate("view_create_plans").IsValid);
         Assert.True(ToolNamePolicy.Validate("export_pdf").IsValid);
+    }
+
+    [Fact]
+    public void Action_first_create_names_are_not_canonical()
+    {
+        Assert.False(ToolNamePolicy.Validate("create_levels").IsValid);
+        Assert.False(ToolNamePolicy.Validate("create_sheets").IsValid);
+        Assert.False(ToolNamePolicy.Validate("create_schedule").IsValid);
     }
 
     [Fact]

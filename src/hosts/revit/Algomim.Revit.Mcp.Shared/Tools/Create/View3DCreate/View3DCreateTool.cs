@@ -14,7 +14,7 @@ internal sealed class View3DCreateTool : RevitPlannedWriteToolBase<View3DCreateP
     private View3DCreateTool(IUiThreadDispatcher dispatcher, IRevitDocumentContextStore documentContextStore, RevitView3DCreateExecutor executor)
         : base(dispatcher, documentContextStore) => _executor = executor;
 
-    public override string Name => "create_view_3ds";
+    public override string Name => "view_create_3ds";
     public override string Description => "Create isometric 3D views.";
     public override JsonElement InputSchema { get; } = Schema.From(new
     {
@@ -22,7 +22,7 @@ internal sealed class View3DCreateTool : RevitPlannedWriteToolBase<View3DCreateP
         properties = new { names = ArrayOf("string") },
         required = new[] { "names" },
     });
-    public override ToolMetadata Metadata { get; } = new("create_view_3ds", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create isometric 3D views.");
+    public override ToolMetadata Metadata { get; } = new("view_create_3ds", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create isometric 3D views.");
 
     public static IMcpTool Create(RevitToolServices services)
         => new View3DCreateTool(services.Dispatcher, services.DocumentContextStore, new RevitView3DCreateExecutor());

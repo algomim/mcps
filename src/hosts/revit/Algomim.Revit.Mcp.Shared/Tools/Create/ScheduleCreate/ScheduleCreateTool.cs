@@ -14,7 +14,7 @@ internal sealed class ScheduleCreateTool : RevitPlannedWriteToolBase<ScheduleCre
     private ScheduleCreateTool(IUiThreadDispatcher dispatcher, IRevitDocumentContextStore documentContextStore, RevitScheduleCreateExecutor executor)
         : base(dispatcher, documentContextStore) => _executor = executor;
 
-    public override string Name => "create_schedule";
+    public override string Name => "schedule_create";
     public override string Description => "Create a schedule for a category and add parameter columns.";
     public override JsonElement InputSchema { get; } = Schema.From(new
     {
@@ -22,7 +22,7 @@ internal sealed class ScheduleCreateTool : RevitPlannedWriteToolBase<ScheduleCre
         properties = new { name = new { type = "string" }, categoryId = new { type = "integer" }, parameterIds = ArrayOf("integer") },
         required = new[] { "name", "categoryId", "parameterIds" },
     });
-    public override ToolMetadata Metadata { get; } = new("create_schedule", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create a schedule for a category and add parameter columns.");
+    public override ToolMetadata Metadata { get; } = new("schedule_create", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create a schedule for a category and add parameter columns.");
 
     public static IMcpTool Create(RevitToolServices services)
         => new ScheduleCreateTool(services.Dispatcher, services.DocumentContextStore, new RevitScheduleCreateExecutor());

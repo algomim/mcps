@@ -14,7 +14,7 @@ internal sealed class TagCreateTool : RevitPlannedWriteToolBase<TagCreatePlan>
     private TagCreateTool(IUiThreadDispatcher dispatcher, IRevitDocumentContextStore documentContextStore, RevitTagCreateExecutor executor)
         : base(dispatcher, documentContextStore) => _executor = executor;
 
-    public override string Name => "create_tags";
+    public override string Name => "tag_create";
     public override string Description => "Create category tags for element ids in a view.";
     public override JsonElement InputSchema { get; } = Schema.From(new
     {
@@ -30,7 +30,7 @@ internal sealed class TagCreateTool : RevitPlannedWriteToolBase<TagCreatePlan>
         },
         required = new[] { "elementIds", "viewId", "offsetX", "offsetY", "addLeader", "addElbowHorizontalLeader" },
     });
-    public override ToolMetadata Metadata { get; } = new("create_tags", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create category tags for element ids in a view.");
+    public override ToolMetadata Metadata { get; } = new("tag_create", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create category tags for element ids in a view.");
 
     public static IMcpTool Create(RevitToolServices services)
         => new TagCreateTool(services.Dispatcher, services.DocumentContextStore, new RevitTagCreateExecutor());

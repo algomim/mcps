@@ -25,19 +25,21 @@ level_create
 grid_create
 schedule_create
 tag_create
+view_create_plans
+view_create_text_notes
 export_pdf
 script_execute
 api_discover
 ```
 
-Legacy/action-first names can remain as aliases while clients migrate:
+Do not expose action-first create names in the public catalog:
 
 ```text
-create_levels -> level_create
-create_grids -> grid_create
-create_sheets -> sheet_create
-create_schedule -> schedule_create
-create_tags -> tag_create
+create_levels
+create_grids
+create_sheets
+create_schedule
+create_tags
 ```
 
 The pure naming policy lives in `src/common/Algomim.Aec.Mcp.Core/Naming/ToolNamePolicy.cs` and is

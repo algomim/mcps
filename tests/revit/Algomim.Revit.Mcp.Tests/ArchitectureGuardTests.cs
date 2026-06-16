@@ -138,7 +138,7 @@ public class ArchitectureGuardTests
     }
 
     private static bool IsAllowedLegacyToolName(string name)
-        => name is "execute-script" or "discover-api" || name.StartsWith("create_", StringComparison.Ordinal);
+        => name is "execute-script" or "discover-api";
 
     private static bool IsSourceFile(string file)
     {
@@ -170,17 +170,6 @@ public class ArchitectureGuardTests
         "api_discover",
         "category_list",
         "category_search",
-        "create_drafting_or_legend_views",
-        "create_grids",
-        "create_levels",
-        "create_room_elevation_views",
-        "create_schedule",
-        "create_sheets",
-        "create_tags",
-        "create_text_notes",
-        "create_view_3ds",
-        "create_view_plans",
-        "create_view_sections",
         "discover-api",
         "document_get_info",
         "document_get_units",

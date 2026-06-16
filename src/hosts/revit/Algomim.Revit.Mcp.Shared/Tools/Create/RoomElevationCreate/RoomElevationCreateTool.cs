@@ -14,7 +14,7 @@ internal sealed class RoomElevationCreateTool : RevitPlannedWriteToolBase<RoomEl
     private RoomElevationCreateTool(IUiThreadDispatcher dispatcher, IRevitDocumentContextStore documentContextStore, RevitRoomElevationCreateExecutor executor)
         : base(dispatcher, documentContextStore) => _executor = executor;
 
-    public override string Name => "create_room_elevation_views";
+    public override string Name => "view_create_room_elevations";
     public override string Description => "Create room elevation views using elevation markers.";
     public override JsonElement InputSchema { get; } = Schema.From(new
     {
@@ -31,7 +31,7 @@ internal sealed class RoomElevationCreateTool : RevitPlannedWriteToolBase<RoomEl
         },
         required = new[] { "roomIds", "viewPlanIds", "scales", "includeNorth", "includeWest", "includeSouth", "includeEast" },
     });
-    public override ToolMetadata Metadata { get; } = new("create_room_elevation_views", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create room elevation views using elevation markers.");
+    public override ToolMetadata Metadata { get; } = new("view_create_room_elevations", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create room elevation views using elevation markers.");
 
     public static IMcpTool Create(RevitToolServices services)
         => new RoomElevationCreateTool(services.Dispatcher, services.DocumentContextStore, new RevitRoomElevationCreateExecutor());

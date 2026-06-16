@@ -14,7 +14,7 @@ internal sealed class SheetCreateTool : RevitPlannedWriteToolBase<SheetCreatePla
     private SheetCreateTool(IUiThreadDispatcher dispatcher, IRevitDocumentContextStore documentContextStore, RevitSheetCreateExecutor executor)
         : base(dispatcher, documentContextStore) => _executor = executor;
 
-    public override string Name => "create_sheets";
+    public override string Name => "sheet_create";
     public override string Description => "Create sheets with optional titleblock type ids.";
     public override JsonElement InputSchema { get; } = Schema.From(new
     {
@@ -22,7 +22,7 @@ internal sealed class SheetCreateTool : RevitPlannedWriteToolBase<SheetCreatePla
         properties = new { names = ArrayOf("string"), titleblockTypeIds = ArrayOf("integer") },
         required = new[] { "names" },
     });
-    public override ToolMetadata Metadata { get; } = new("create_sheets", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create sheets with optional titleblock type ids.");
+    public override ToolMetadata Metadata { get; } = new("sheet_create", ToolCategory.Create, ToolMode.Write, ToolRisk.High, "Create sheets with optional titleblock type ids.");
 
     public static IMcpTool Create(RevitToolServices services)
         => new SheetCreateTool(services.Dispatcher, services.DocumentContextStore, new RevitSheetCreateExecutor());
