@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/src/common/">
+    <Project Path="src/common/Algomim.Aec.Mcp.Abstractions/Algomim.Aec.Mcp.Abstractions.csproj" />
+    <Project Path="src/common/Algomim.Aec.Mcp.Core/Algomim.Aec.Mcp.Core.csproj" />
+    <Project Path="src/common/Algomim.Aec.Mcp.Tooling/Algomim.Aec.Mcp.Tooling.csproj" />
+  </Folder>
+  <Folder Name="/src/hosts/revit/">
+    <Project Path="src/hosts/revit/Algomim.Revit.Mcp.2025/Algomim.Revit.Mcp.2025.csproj" />
+    <Project Path="src/hosts/revit/Algomim.Revit.Mcp.2026/Algomim.Revit.Mcp.2026.csproj" />
+    <Project Path="src/hosts/revit/Algomim.Revit.Mcp.2027/Algomim.Revit.Mcp.2027.csproj" />
+  </Folder>
+  <Folder Name="/src/hosts/autocad/">
+    <Project Path="src/hosts/autocad/Algomim.AutoCad.Mcp.2025/Algomim.AutoCad.Mcp.2025.csproj" />
+    <Project Path="src/hosts/autocad/Algomim.AutoCad.Mcp.2026/Algomim.AutoCad.Mcp.2026.csproj" />
+  </Folder>
+  <Folder Name="/tests/revit/">
+    <Project Path="tests/revit/Algomim.Revit.Mcp.Tests/Algomim.Revit.Mcp.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/autocad/">
+    <Project Path="tests/autocad/Algomim.AutoCad.Mcp.Tests/Algomim.AutoCad.Mcp.Tests.csproj" />
+  </Folder>
+</Solution>

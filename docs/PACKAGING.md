@@ -1,0 +1,102 @@
+# Packaging
+
+Each host ships as its own MSI:
+
+```text
+revit-mcp.msi
+autocad-mcp.msi
+rhino-mcp.msi
+```
+
+Host MSIs must remain independently installable. Future bundle installers should compose host MSIs
+instead of mixing host-specific registration rules into one setup.
+
+Packaging unit:
+
+```text
+One MSI per host, not one MSI per product year.
+
+revit-mcp.msi   -> Revit 2025, 2026, 2027 payloads/manifests
+autocad-mcp.msi -> AutoCAD 2025, 2026 payloads/manifests
+rhino-mcp.msi   -> Rhino payloads when added
+```
+
+Year-specific binaries stay inside the host MSI. This keeps installation simple for users while
+still allowing each Autodesk version to load its matching runtime assembly.
+
+Installer edge-case behavior:
+
+- If none of the supported versions for a host is installed, the MSI stops with a clear message.
+- If only one supported version is installed, only that year's add-in payload is installed.
+- Missing years are not populated under Revit `Addins/<year>` folders.
+- AutoCAD still uses Autodesk AppLoader `RuntimeRequirements`; the MSI also skips payload folders
+  for unsupported/missing AutoCAD years.
+
+GitHub releases should publish host MSI assets:
+
+```text
+revit-mcp-vX.Y.Z.msi
+autocad-mcp-vX.Y.Z.msi
+revit-mcp-vX.Y.Z.msi.sha256
+autocad-mcp-vX.Y.Z.msi.sha256
+```
+
+Version metadata is release-gated. Before creating a tag, run:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/version.ps1 -Version X.Y.Z
+```
+
+The script keeps these values aligned:
+
+- `Directory.Build.props` `Version`
+- Revit and AutoCAD WiX `Package` versions (`X.Y.Z.0`)
+- AutoCAD `PackageContents.xml` `AppVersion`
+
+CI checks the current repository version metadata. The release workflow also checks that the tag
+name (`vX.Y.Z`) matches the synced metadata before building installers.
+
+## Update discovery
+
+Installed host add-ins check GitHub Releases for newer host-specific MSI assets:
+
+```text
+revit-mcp-vX.Y.Z.msi
+autocad-mcp-vX.Y.Z.msi
+```
+
+There is no separate updater executable in the first update flow. Revit and AutoCAD share the common
+release-checking code, but each host points users to its own MSI. Users should close the Autodesk host
+before running the downloaded installer.
+
+Release builds require a Windows self-hosted runner with the Autodesk products/SDK DLLs needed by
+the host projects. Cloud CI should only build host projects that use NuGet reference assemblies.
+MSIs must be built as x64 packages.
+
+Current Revit targets:
+
+```text
+Revit 2025 -> net8.0-windows
+Revit 2026 -> net8.0-windows
+Revit 2027 -> net10.0-windows
+```
+
+Current AutoCAD targets:
+
+```text
+AutoCAD 2025 -> net8.0-windows
+AutoCAD 2026 -> net8.0-windows
+AutoCAD 2027 -> net10.0-windows (prepared, requires installed AutoCAD 2027 SDK)
+```
+
+Installer layout:
+
+```text
+installer/
+  revit-mcp.wxs
+  hosts/
+    revit/
+    autocad/
+    rhino/
+  bundles/
+```

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>revit-mcp</Name>
+    <Assembly>revit-mcp\Algomim.Revit.Mcp.2027.dll</Assembly>
+    <FullClassName>Algomim.Revit.Mcp.App.RevitMcpApp</FullClassName>
+    <ClientId>E0B5C3D4-9F60-4C12-B34E-5A7182930BCF</ClientId>
+    <VendorId>ALGOMIM</VendorId>
+    <VendorDescription>Algomim — open-source MCP server for Revit</VendorDescription>
+  </AddIn>
+</RevitAddIns>

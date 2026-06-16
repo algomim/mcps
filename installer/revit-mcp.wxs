@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  WiX v4/v5 MSI for revit-mcp. Installs each Revit version's plugin (DLL + dependencies) into a
+  `revit-mcp` subfolder under the all-users Revit Addins folder, plus the matching .addin manifest.
+
+  Build (requires the WiX dotnet tool and a prior Release build):
+    wix build installer/revit-mcp.wxs -o dist/revit-mcp.msi
+
+  The <Files> harvesting pulls from each version project's Release output, so build first.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="revit-mcp" Manufacturer="Algomim" Version="0.1.11.0" UpgradeCode="A1B2C3D4-1111-2222-3333-444455556666" Scope="perMachine">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of revit-mcp is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+    <Launch Condition="Installed OR REVIT2025INSTALLED OR REVIT2026INSTALLED OR REVIT2027INSTALLED OR REVIT2025DEFAULTPATH OR REVIT2026DEFAULTPATH OR REVIT2027DEFAULTPATH" Message="revit-mcp requires Revit 2025, Revit 2026, or Revit 2027." />
+
+    <Property Id="REVIT2025INSTALLED">
+      <RegistrySearch Id="DetectRevit2025" Root="HKLM" Key="SOFTWARE\Autodesk\Revit\2025\REVIT-05:0409" Name="InstallationLocation" Bitness="always64" Type="raw" />
+    </Property>
+    <Property Id="REVIT2025DEFAULTPATH">
+      <DirectorySearch Id="DetectRevit2025DefaultDirectory" Path="[ProgramFiles64Folder]Autodesk\Revit 2025">
+        <FileSearch Id="DetectRevit2025DefaultExe" Name="Revit.exe" />
+      </DirectorySearch>
+    </Property>
+    <Property Id="REVIT2026INSTALLED">
+      <RegistrySearch Id="DetectRevit2026" Root="HKLM" Key="SOFTWARE\Autodesk\Revit\2026\REVIT-05:0409" Name="InstallationLocation" Bitness="always64" Type="raw" />
+    </Property>
+    <Property Id="REVIT2026DEFAULTPATH">
+      <DirectorySearch Id="DetectRevit2026DefaultDirectory" Path="[ProgramFiles64Folder]Autodesk\Revit 2026">
+        <FileSearch Id="DetectRevit2026DefaultExe" Name="Revit.exe" />
+      </DirectorySearch>
+    </Property>
+    <Property Id="REVIT2027INSTALLED">
+      <RegistrySearch Id="DetectRevit2027" Root="HKLM" Key="SOFTWARE\Autodesk\Revit\2027\REVIT-05:0409" Name="InstallationLocation" Bitness="always64" Type="raw" />
+    </Property>
+    <Property Id="REVIT2027DEFAULTPATH">
+      <DirectorySearch Id="DetectRevit2027DefaultDirectory" Path="[ProgramFiles64Folder]Autodesk\Revit 2027">
+        <FileSearch Id="DetectRevit2027DefaultExe" Name="Revit.exe" />
+      </DirectorySearch>
+    </Property>
+
+    <StandardDirectory Id="CommonAppDataFolder">
+      <Directory Id="AutodeskFolder" Name="Autodesk">
+        <Directory Id="RevitFolder" Name="Revit">
+          <Directory Id="AddinsFolder" Name="Addins">
+            <Directory Id="Addins2025" Name="2025"><Directory Id="Plugin2025" Name="revit-mcp" /></Directory>
+            <Directory Id="Addins2026" Name="2026"><Directory Id="Plugin2026" Name="revit-mcp" /></Directory>
+            <Directory Id="Addins2027" Name="2027"><Directory Id="Plugin2027" Name="revit-mcp" /></Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <Feature Id="Main" Title="revit-mcp">
+      <Feature Id="Revit2025" Title="Revit 2025 add-in" Level="1">
+        <Level Value="0" Condition="NOT REVIT2025INSTALLED AND NOT REVIT2025DEFAULTPATH" />
+        <ComponentGroupRef Id="Files2025" />
+        <ComponentRef Id="Addin2025" />
+      </Feature>
+      <Feature Id="Revit2026" Title="Revit 2026 add-in" Level="1">
+        <Level Value="0" Condition="NOT REVIT2026INSTALLED AND NOT REVIT2026DEFAULTPATH" />
+        <ComponentGroupRef Id="Files2026" />
+        <ComponentRef Id="Addin2026" />
+      </Feature>
+      <Feature Id="Revit2027" Title="Revit 2027 add-in" Level="1">
+        <Level Value="0" Condition="NOT REVIT2027INSTALLED AND NOT REVIT2027DEFAULTPATH" />
+        <ComponentGroupRef Id="Files2027" />
+        <ComponentRef Id="Addin2027" />
+      </Feature>
+    </Feature>
+
+    <!-- Revit 2025 (net8) -->
+    <ComponentGroup Id="Files2025" Directory="Plugin2025">
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\**" />
+    </ComponentGroup>
+    <Component Id="Addin2025" Directory="Addins2025">
+      <File Source="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\Algomim.Revit.Mcp.2025.addin" />
+    </Component>
+
+    <!-- Revit 2026 (net8) -->
+    <ComponentGroup Id="Files2026" Directory="Plugin2026">
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\**" />
+    </ComponentGroup>
+    <Component Id="Addin2026" Directory="Addins2026">
+      <File Source="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\Algomim.Revit.Mcp.2026.addin" />
+    </Component>
+
+    <!-- Revit 2027 (net10) -->
+    <ComponentGroup Id="Files2027" Directory="Plugin2027">
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\**" />
+    </ComponentGroup>
+    <Component Id="Addin2027" Directory="Addins2027">
+      <File Source="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\Algomim.Revit.Mcp.2027.addin" />
+    </Component>
+
+  </Package>
+</Wix>

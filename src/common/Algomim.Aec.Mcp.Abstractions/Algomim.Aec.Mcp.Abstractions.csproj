@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Shared AEC MCP contracts: no host SDK references. net8.0 is the common floor;
+         net10 host projects reference it. -->
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Algomim.Aec.Mcp</RootNamespace>
+    <AssemblyName>Algomim.Aec.Mcp.Abstractions</AssemblyName>
+  </PropertyGroup>
+
+</Project>

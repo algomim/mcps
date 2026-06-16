@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>Algomim.Revit.Mcp</RootNamespace>
+    <AssemblyName>Algomim.Revit.Mcp.2027</AssemblyName>
+    <DefineConstants>$(DefineConstants);REVIT2027</DefineConstants>
+    <UseWpf>true</UseWpf>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" VersionOverride="2027.0.20" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" VersionOverride="2027.0.20" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\common\Algomim.Aec.Mcp.Abstractions\Algomim.Aec.Mcp.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\common\Algomim.Aec.Mcp.Core\Algomim.Aec.Mcp.Core.csproj" />
+    <ProjectReference Include="..\..\..\common\Algomim.Aec.Mcp.Tooling\Algomim.Aec.Mcp.Tooling.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Algomim.Revit.Mcp.Shared\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Algomim.Revit.Mcp.2027.addin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

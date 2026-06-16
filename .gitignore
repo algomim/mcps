@@ -1,0 +1,32 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+artifacts/
+dist/
+output/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+*.userprefs
+
+# MSI / WiX intermediates
+*.wixobj
+*.wixpdb
+*.msi
+
+# Test / coverage
+[Tt]est[Rr]esults/
+*.trx
+coverage*.xml
+*.coverage
+
+# NuGet
+*.nupkg
+packages/
+
+# OS
+Thumbs.db
+.DS_Store

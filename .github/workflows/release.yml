@@ -1,0 +1,75 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    # Release builds need Autodesk product SDK DLLs because AutoCAD plugin projects reference
+    # local AutoCAD assemblies. Configure a Windows self-hosted runner on an Autodesk workstation
+    # and give it the labels: self-hosted, Windows, Autodesk.
+    runs-on: [self-hosted, Windows, Autodesk]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      - name: Resolve release version
+        id: release_version
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          if ($tag -notmatch '^v\d+\.\d+\.\d+$') {
+            throw "Release tags must use vX.Y.Z format. Got '$tag'."
+          }
+
+          $version = $tag.Substring(1)
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Check release version metadata
+        shell: pwsh
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/version.ps1 -Version "${{ steps.release_version.outputs.version }}" -Check
+
+      - name: Build and test
+        run: |
+          dotnet build Algomim.Aec.Mcp.slnx -c Release
+          dotnet test Algomim.Aec.Mcp.slnx -c Release --no-build
+
+      - name: Install or update WiX
+        run: |
+          dotnet tool install --global wix
+          if ($LASTEXITCODE -ne 0) {
+            dotnet tool update --global wix
+          }
+
+      - name: Build host MSIs
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          wix build -arch x64 installer/revit-mcp.wxs -o dist/revit-mcp-${{ steps.release_version.outputs.version }}.msi
+          wix build -arch x64 installer/autocad-mcp.wxs -o dist/autocad-mcp-${{ steps.release_version.outputs.version }}.msi
+
+      - name: Generate checksums
+        shell: pwsh
+        run: |
+          Get-ChildItem dist -Filter *.msi | ForEach-Object {
+            $hash = Get-FileHash $_.FullName -Algorithm SHA256
+            "$($hash.Hash.ToLowerInvariant())  $($_.Name)" |
+              Set-Content -Encoding ascii "$($_.FullName).sha256"
+          }
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.msi
+            dist/*.msi.sha256
+          generate_release_notes: true

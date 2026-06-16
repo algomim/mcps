@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  WiX v4/v5 MSI for autocad-mcp. Installs a single Autodesk ApplicationPlugins bundle with
+  version-specific AutoCAD plugin binaries under Contents/2025 and Contents/2026.
+
+  Build (requires the WiX dotnet tool and a prior Release build):
+    wix build installer/autocad-mcp.wxs -o dist/autocad-mcp.msi
+
+  AutoCAD 2027 is intentionally not harvested until the local AutoCAD 2027 SDK/output exists.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="autocad-mcp" Manufacturer="Algomim" Version="0.1.11.0" UpgradeCode="B1B2C3D4-1111-2222-3333-444455556666" Scope="perMachine">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of autocad-mcp is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+    <Launch Condition="Installed OR AUTOCAD2025INSTALLED OR AUTOCAD2026INSTALLED OR AUTOCAD2025DEFAULTPATH OR AUTOCAD2026DEFAULTPATH" Message="autocad-mcp requires AutoCAD 2025 or AutoCAD 2026." />
+
+    <Property Id="AUTOCAD2025INSTALLED">
+      <RegistrySearch Id="DetectAutoCad2025" Root="HKLM" Key="SOFTWARE\Autodesk\AutoCAD\R25.0\ACAD-8101:409" Name="Location" Bitness="always64" Type="raw" />
+    </Property>
+    <Property Id="AUTOCAD2025DEFAULTPATH">
+      <DirectorySearch Id="DetectAutoCad2025DefaultDirectory" Path="[ProgramFiles64Folder]Autodesk\AutoCAD 2025">
+        <FileSearch Id="DetectAutoCad2025DefaultExe" Name="acad.exe" />
+      </DirectorySearch>
+    </Property>
+    <Property Id="AUTOCAD2026INSTALLED">
+      <RegistrySearch Id="DetectAutoCad2026" Root="HKLM" Key="SOFTWARE\Autodesk\AutoCAD\R25.1\ACAD-9101:409" Name="Location" Bitness="always64" Type="raw" />
+    </Property>
+    <Property Id="AUTOCAD2026DEFAULTPATH">
+      <DirectorySearch Id="DetectAutoCad2026DefaultDirectory" Path="[ProgramFiles64Folder]Autodesk\AutoCAD 2026">
+        <FileSearch Id="DetectAutoCad2026DefaultExe" Name="acad.exe" />
+      </DirectorySearch>
+    </Property>
+
+    <StandardDirectory Id="CommonAppDataFolder">
+      <Directory Id="AutodeskFolder" Name="Autodesk">
+        <Directory Id="ApplicationPluginsFolder" Name="ApplicationPlugins">
+          <Directory Id="AutoCadBundleFolder" Name="Algomim.AutoCad.Mcp.bundle">
+            <Directory Id="AutoCadContentsFolder" Name="Contents">
+              <Directory Id="AutoCad2025Folder" Name="2025" />
+              <Directory Id="AutoCad2026Folder" Name="2026" />
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <Feature Id="Main" Title="autocad-mcp">
+      <ComponentRef Id="AutoCadBundleManifest" />
+      <Feature Id="AutoCad2025" Title="AutoCAD 2025 add-in" Level="1">
+        <Level Value="0" Condition="NOT AUTOCAD2025INSTALLED AND NOT AUTOCAD2025DEFAULTPATH" />
+        <ComponentGroupRef Id="AutoCadFiles2025" />
+      </Feature>
+      <Feature Id="AutoCad2026" Title="AutoCAD 2026 add-in" Level="1">
+        <Level Value="0" Condition="NOT AUTOCAD2026INSTALLED AND NOT AUTOCAD2026DEFAULTPATH" />
+        <ComponentGroupRef Id="AutoCadFiles2026" />
+      </Feature>
+    </Feature>
+
+    <Component Id="AutoCadBundleManifest" Directory="AutoCadBundleFolder">
+      <File Source="$(sys.SOURCEFILEDIR)hosts\autocad\PackageContents.xml" />
+    </Component>
+
+    <ComponentGroup Id="AutoCadFiles2025" Directory="AutoCad2025Folder">
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2025\bin\Release\net8.0-windows\**" />
+    </ComponentGroup>
+
+    <ComponentGroup Id="AutoCadFiles2026" Directory="AutoCad2026Folder">
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2026\bin\Release\net8.0-windows\**" />
+    </ComponentGroup>
+
+  </Package>
+</Wix>

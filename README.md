@@ -1,0 +1,99 @@
+# Algomim AEC MCP
+
+An AEC-focused [Model Context Protocol](https://modelcontextprotocol.io) monorepo. Autodesk Revit
+and AutoCAD are the first host adapters; Rhino is planned as a separate host package and installer.
+
+`revit-mcp` exposes Revit to AI agents through a typed tool catalog plus two low-level primitives:
+
+| Tool family | Purpose |
+|---|---|
+| Typed tools | Stable `lower_snake_case` Revit operations for document/category/element/family/type/parameter/geometry/view/sheet/graphics/modify/create/export workflows. |
+| `script_execute` | Compile and run C# against the live Revit API, inside Revit, on the UI thread, wrapped in a safety harness. Legacy alias: `execute-script`. |
+| `api_discover` | Introspect the currently running Revit version's API surface so the agent writes version-correct code. Legacy alias: `discover-api`. |
+
+Common Revit and AutoCAD operations live as first-class typed tools with consistent names, schemas,
+response envelopes, and safety policies. The Revit script/API primitives remain available for
+advanced cases and for capabilities that have not yet graduated into typed tools.
+
+Common contracts live in `src/common/Algomim.Aec.Mcp.*`; host adapters live under
+`src/hosts/<host>/`. The public Revit tool list is assembled through module registration in
+`src/hosts/revit/Algomim.Revit.Mcp.Shared/Tools/Composition/RevitToolModuleRegistry.cs`.
+AutoCAD follows the same host-adapter shape with C#/.NET API-first tools and no Python/LISP/SCR
+foundation.
+
+Current visible Revit MCP names: 63 original typed tool names, 11 domain-first canonical create
+aliases, plus 2 backward-compatible legacy aliases.
+
+Representative typed tools:
+
+```text
+document_get_info, document_switch_context
+category_search, category_list
+element_get_info, element_list_by_category
+family_list, family_list_types, family_list_elements
+parameter_list, parameter_get_values, parameter_set_values
+property_list, property_get_values, property_set_values
+material_get_layers
+geometry_get_locations, geometry_get_bounding_boxes, geometry_get_host_ids, geometry_get_boundary_lines
+view_get_active, view_list_elements, view_isolate_elements
+sheet_get_contents, sheet_set_revisions, sheet_place_views
+schedule_get_info, schedule_create, create_schedule
+model_list_warnings, document_get_units, workset_list, workset_get_for_elements
+graphics_get_element_overrides, graphics_get_view_filters, graphics_set_element_overrides
+selection_get, selection_set
+element_move, element_rotate, element_copy, element_delete
+grid_create, level_create, sheet_create, tag_create
+create_grids, create_levels, create_view_plans, create_view_3ds, create_sheets, create_tags
+export_pdf, export_cad
+```
+
+Current AutoCAD MCP catalog: 50 C# AutoCAD API tools across layer, geometry, entity, measurement,
+drawing, block, dimension, annotation, document, and DXF export workflows.
+
+## How it works
+
+```text
+OpenCode / Codex / Claude  --MCP (localhost)-->  revit-mcp (in Revit)  -->  Revit API
+        (agent host)                              connect/disconnect       (UI thread + transaction)
+```
+
+The Revit add-in hosts the MCP endpoint in-process. A single ribbon button toggles it: **click to connect, click again to disconnect**. There is no separate connector executable; the installer ships the add-in only.
+
+## Supported Revit versions
+
+| Revit | Runtime |
+|---|---|
+| 2025 / 2026 | .NET 8 (`net8.0-windows`) |
+| 2027 | .NET 10 (`net10.0-windows`) |
+
+## Typed tool response shape
+
+Typed tools return a standard JSON envelope:
+
+```json
+{ "ok": true, "data": {}, "summary": "...", "warnings": [] }
+```
+
+Errors use the same shape:
+
+```json
+{ "ok": false, "code": "...", "message": "...", "details": {}, "warnings": [] }
+```
+
+## Install
+
+Ships as host-specific **MSI** packages (built with WiX). Revit and AutoCAD have independent MSIs;
+future Rhino packaging should follow the same shape.
+
+## Design principles
+
+SOLID; functional core / imperative shell; ports/adapters; modular tool modules; domain-first tool
+naming; host-specific installers. See [CONTRIBUTING.md](CONTRIBUTING.md),
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/TOOL_NAMING.md](docs/TOOL_NAMING.md), and
+[docs/PACKAGING.md](docs/PACKAGING.md).
+
+## Status
+
+Early development. The typed Revit foundation, AutoCAD host foundation, host-specific MSI packaging,
+and target capability map are implemented; broader real-project smoke testing is still required
+before release.

@@ -1,0 +1,42 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  cloud-build-and-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      - name: Check release version metadata
+        shell: pwsh
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/version.ps1 -Check
+
+      # Cloud CI only builds projects that do not require a locally installed Autodesk product.
+      # Revit builds against NuGet reference assemblies. AutoCAD plugin projects require installed
+      # AutoCAD SDK DLLs and are built by the release runner/local Autodesk workstation.
+      - name: Build common packages
+        run: |
+          dotnet build src/common/Algomim.Aec.Mcp.Abstractions/Algomim.Aec.Mcp.Abstractions.csproj -c Release
+          dotnet build src/common/Algomim.Aec.Mcp.Core/Algomim.Aec.Mcp.Core.csproj -c Release
+          dotnet build src/common/Algomim.Aec.Mcp.Tooling/Algomim.Aec.Mcp.Tooling.csproj -c Release
+
+      - name: Build Revit host packages
+        run: |
+          dotnet build src/hosts/revit/Algomim.Revit.Mcp.2025/Algomim.Revit.Mcp.2025.csproj -c Release
+          dotnet build src/hosts/revit/Algomim.Revit.Mcp.2026/Algomim.Revit.Mcp.2026.csproj -c Release
+          dotnet build src/hosts/revit/Algomim.Revit.Mcp.2027/Algomim.Revit.Mcp.2027.csproj -c Release
+
+      - name: Test host-neutral suites
+        run: |
+          dotnet test tests/revit/Algomim.Revit.Mcp.Tests/Algomim.Revit.Mcp.Tests.csproj -c Release
+          dotnet test tests/autocad/Algomim.AutoCad.Mcp.Tests/Algomim.AutoCad.Mcp.Tests.csproj -c Release

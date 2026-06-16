@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Algomim.Aec.Mcp.Tooling</RootNamespace>
+    <AssemblyName>Algomim.Aec.Mcp.Tooling</AssemblyName>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Algomim.Aec.Mcp.Abstractions\Algomim.Aec.Mcp.Abstractions.csproj" />
+    <ProjectReference Include="..\Algomim.Aec.Mcp.Core\Algomim.Aec.Mcp.Core.csproj" />
+  </ItemGroup>
+
+</Project>
