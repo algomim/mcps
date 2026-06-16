@@ -2,6 +2,7 @@
 
 An AEC-focused [Model Context Protocol](https://modelcontextprotocol.io) monorepo. Autodesk Revit
 and AutoCAD are the first host adapters; Rhino is planned as a separate host package and installer.
+The project is licensed under Apache-2.0 and developed in public through issue-first pull requests.
 
 `revit-mcp` exposes Revit to AI agents through a typed tool catalog plus two low-level primitives:
 
@@ -85,6 +86,9 @@ Errors use the same shape:
 Ships as host-specific **MSI** packages (built with WiX). Revit and AutoCAD have independent MSIs;
 future Rhino packaging should follow the same shape.
 
+Public installer artifacts are published from GitHub Releases when available. Revit and AutoCAD
+should be closed before running an installer or update MSI.
+
 ## License
 
 Apache-2.0. See [LICENSE](LICENSE).
@@ -94,12 +98,15 @@ Apache-2.0. See [LICENSE](LICENSE).
 Please report vulnerabilities privately; see [SECURITY.md](SECURITY.md). Contributions follow an
 issue-first workflow; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Documentation
+
+See [docs/README.md](docs/README.md) for architecture, packaging, release, naming, and public
+repository guardrail docs.
+
 ## Design principles
 
 SOLID; functional core / imperative shell; ports/adapters; modular tool modules; domain-first tool
-naming; host-specific installers. See [CONTRIBUTING.md](CONTRIBUTING.md),
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/TOOL_NAMING.md](docs/TOOL_NAMING.md), and
-[docs/PACKAGING.md](docs/PACKAGING.md).
+naming; host-specific installers.
 
 ## Status
 
