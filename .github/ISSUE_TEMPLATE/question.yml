@@ -1,0 +1,21 @@
+name: Question
+description: Ask a focused usage, build, or integration question.
+title: "question: "
+labels: ["question", "needs-triage"]
+body:
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Preflight
+      options:
+        - label: I searched existing issues and docs first.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: Include the host, version, and what you already tried when relevant.
+    validations:
+      required: true

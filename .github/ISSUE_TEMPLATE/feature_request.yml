@@ -1,0 +1,46 @@
+name: Feature request
+description: Suggest a focused improvement or new capability.
+title: "feat: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Preflight
+      options:
+        - label: I searched existing issues first.
+          required: true
+        - label: I understand that large product changes should be discussed before implementation.
+          required: true
+  - type: dropdown
+    id: host
+    attributes:
+      label: Host
+      options:
+        - Revit
+        - AutoCAD
+        - Shared MCP tooling
+        - Installer or release
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+      description: Optional, but useful if you have a concrete design.
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false

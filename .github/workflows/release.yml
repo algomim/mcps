@@ -13,6 +13,7 @@ jobs:
     # local AutoCAD assemblies. Configure a Windows self-hosted runner on an Autodesk workstation
     # and give it the labels: self-hosted, Windows, Autodesk.
     runs-on: [self-hosted, Windows, Autodesk]
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 

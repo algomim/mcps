@@ -1,5 +1,17 @@
 # Contributing to Algomim AEC MCP
 
+## Issue-first policy
+
+Open or link an issue before sending a pull request. Use `Fixes #123`, `Closes #123`, or
+`Refs #123` in the PR description so maintainers can understand the context and avoid duplicate
+work. Small typo/documentation fixes can use a brief issue.
+
+Large tool, UX, installer, release, or public API changes should start as a design discussion before
+implementation.
+
+Do not report security vulnerabilities in public issues or pull requests. Follow
+[SECURITY.md](SECURITY.md) instead.
+
 ## Design contract
 
 This codebase favors a **small, clean, extensible core** with a typed Revit tool catalog. Every change is held to:
@@ -79,3 +91,4 @@ synced version using `vX.Y.Z` format.
 - `dotnet build -c Release` - zero warnings expected.
 - `dotnet test` - pure-core unit tests green.
 - A compile is **not** proof of runtime. Smoke-test in real Revit before any release.
+- Do not include secrets, proprietary code, customer data, or decompiled source.

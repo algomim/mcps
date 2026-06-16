@@ -89,6 +89,11 @@ future Rhino packaging should follow the same shape.
 
 Apache-2.0. See [LICENSE](LICENSE).
 
+## Security & Contributing
+
+Please report vulnerabilities privately; see [SECURITY.md](SECURITY.md). Contributions follow an
+issue-first workflow; see [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Design principles
 
 SOLID; functional core / imperative shell; ports/adapters; modular tool modules; domain-first tool

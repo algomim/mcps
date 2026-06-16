@@ -1,0 +1,32 @@
+name: pr-standards
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  issue-first:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require linked issue
+        shell: bash
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_AUTHOR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
+        run: |
+          if [[ "$PR_AUTHOR_ASSOCIATION" == "OWNER" || "$PR_AUTHOR_ASSOCIATION" == "MEMBER" || "$PR_AUTHOR_ASSOCIATION" == "COLLABORATOR" ]]; then
+            echo "Trusted maintainer PR; issue-first check skipped."
+            exit 0
+          fi
+
+          if [[ "$PR_BODY" =~ (Fixes|Closes|Resolves|Refs)[[:space:]]+\#[0-9]+ ]]; then
+            echo "Linked issue found."
+            exit 0
+          fi
+
+          echo "External PRs must link an existing issue using Fixes #123, Closes #123, Resolves #123, or Refs #123."
+          exit 1
