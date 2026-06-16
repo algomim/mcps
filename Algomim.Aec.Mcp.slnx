@@ -3,6 +3,7 @@
     <Project Path="src/common/Algomim.Aec.Mcp.Abstractions/Algomim.Aec.Mcp.Abstractions.csproj" />
     <Project Path="src/common/Algomim.Aec.Mcp.Core/Algomim.Aec.Mcp.Core.csproj" />
     <Project Path="src/common/Algomim.Aec.Mcp.Tooling/Algomim.Aec.Mcp.Tooling.csproj" />
+    <Project Path="src/common/Algomim.Aec.Mcp.Updater/Algomim.Aec.Mcp.Updater.csproj" />
   </Folder>
   <Folder Name="/src/hosts/revit/">
     <Project Path="src/hosts/revit/Algomim.Revit.Mcp.2025/Algomim.Revit.Mcp.2025.csproj" />

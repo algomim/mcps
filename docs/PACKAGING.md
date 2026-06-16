@@ -65,9 +65,16 @@ revit-mcp-X.Y.Z.msi
 autocad-mcp-X.Y.Z.msi
 ```
 
-There is no separate updater executable in the first update flow. Revit and AutoCAD share the common
-release-checking code, but each host points users to its own MSI. Users should close the Autodesk host
-before running the downloaded installer.
+Revit and AutoCAD share the common release-checking code and bundle the same updater helper:
+
+```text
+Algomim.Aec.Mcp.Updater.exe
+```
+
+When an update is accepted, the host starts the helper with the host-specific MSI URL. The helper
+downloads the MSI, waits for the current Revit/AutoCAD process to exit, and then starts Windows
+Installer with elevation. If the helper is missing or no host-specific MSI is attached, the host opens
+the release page as a manual fallback.
 
 Release builds require a Windows self-hosted runner with the Autodesk products/SDK DLLs needed by
 the host projects. Cloud CI should only build host projects that use NuGet reference assemblies.

@@ -126,19 +126,36 @@ public sealed class RevitMcpApp : IExternalApplication
                 return;
             }
 
-            var targetUrl = update.InstallerUrl ?? update.ReleaseUrl;
             var installerText = update.InstallerName is null
-                ? "The release page will open so you can choose the installer."
-                : $"The installer download will open: {update.InstallerName}";
+                ? "No host-specific MSI was found. The release page can be opened instead."
+                : $"Installer: {update.InstallerName}";
             var result = System.Windows.Forms.MessageBox.Show(
                 $"revit-mcp {update.LatestVersion} is available. You have {update.CurrentVersion}.\n\n" +
-                $"{installerText}\n\nClose Revit before running the MSI.",
+                $"{installerText}\n\nDownload now and install automatically after Revit closes?",
                 "Algomim MCP Update",
                 System.Windows.Forms.MessageBoxButtons.YesNo,
                 System.Windows.Forms.MessageBoxIcon.Information);
 
-            if (result == System.Windows.Forms.DialogResult.Yes)
-                OpenUrl(targetUrl);
+            if (result != System.Windows.Forms.DialogResult.Yes)
+                return;
+
+            var launch = UpdateInstallerLauncher.Launch(update, "Revit");
+            if (launch.Started)
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    launch.Message,
+                    "Algomim MCP Update",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Information);
+                return;
+            }
+
+            System.Windows.Forms.MessageBox.Show(
+                $"{launch.Message}\n\nOpening the release page so you can run the MSI manually.",
+                "Algomim MCP Update",
+                System.Windows.Forms.MessageBoxButtons.OK,
+                System.Windows.Forms.MessageBoxIcon.Information);
+            OpenUrl(update.InstallerUrl ?? update.ReleaseUrl);
         }
         catch (Exception ex)
         {
