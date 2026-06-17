@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ApplicationPackage SchemaVersion="1.0" AutodeskProduct="AutoCAD" Name="Algomim AutoCAD MCP 2026" AppVersion="0.1.17">
+<ApplicationPackage SchemaVersion="1.0" AutodeskProduct="AutoCAD" Name="Algomim AutoCAD MCP 2026" AppVersion="0.1.18">
   <Components Description="Algomim AutoCAD MCP 2026">
     <RuntimeRequirements OS="Win64" Platform="AutoCAD" SeriesMin="R25.1" SeriesMax="R25.1" />
     <ComponentEntry AppName="Algomim AutoCAD MCP 2026" ModuleName="./Contents/2026/Algomim.AutoCad.Mcp.2026.dll" LoadOnAutoCADStartup="True" />
