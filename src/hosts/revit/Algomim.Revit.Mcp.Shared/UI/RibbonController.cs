@@ -11,6 +11,9 @@ public sealed class RibbonController
 
     private readonly UIControlledApplication _application;
     private PushButton? _toggleButton;
+    private PushButton? _updateButton;
+    private string _updateText = "Update";
+    private string _updateToolTip = "Check GitHub Releases for a newer revit-mcp MSI.";
 
     public RibbonController(UIControlledApplication application) => _application = application;
 
@@ -38,7 +41,8 @@ public sealed class RibbonController
         };
 
         _toggleButton = panel.AddItem(toggleData) as PushButton;
-        panel.AddItem(updateData);
+        _updateButton = panel.AddItem(updateData) as PushButton;
+        ApplyUpdateButtonState();
     }
 
     public void SetConnected(int port)
@@ -51,5 +55,34 @@ public sealed class RibbonController
     {
         if (_toggleButton is not null)
             _toggleButton.ItemText = "Connect";
+    }
+
+    public void SetUpdateAvailable(string latestVersion)
+        => SetUpdateButton(
+            "Update\nAvailable",
+            $"revit-mcp {latestVersion} is available. Click to open the release page.");
+
+    public void SetUpToDate(string currentVersion)
+        => SetUpdateButton(
+            "Up to\ndate",
+            $"revit-mcp is up to date ({currentVersion}). Click to check again.");
+
+    public void SetUpdateUnknown()
+        => SetUpdateButton(
+            "Update",
+            "Check GitHub Releases for a newer revit-mcp MSI.");
+
+    private void SetUpdateButton(string text, string toolTip)
+    {
+        _updateText = text;
+        _updateToolTip = toolTip;
+        ApplyUpdateButtonState();
+    }
+
+    private void ApplyUpdateButtonState()
+    {
+        if (_updateButton is null) return;
+        _updateButton.ItemText = _updateText;
+        _updateButton.ToolTip = _updateToolTip;
     }
 }
