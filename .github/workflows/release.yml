@@ -68,7 +68,7 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
-          wix build -arch x64 installer/revit-mcp.wxs -o dist/revit-mcp-${{ steps.release_version.outputs.version }}.msi
+          wix build -acceptEula wix7 -arch x64 installer/revit-mcp.wxs -o dist/revit-mcp-${{ steps.release_version.outputs.version }}.msi
 
       - name: Generate checksums
         shell: pwsh
