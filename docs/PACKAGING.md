@@ -70,9 +70,11 @@ GitHub Release in the background and notifies the user only when a newer host-sp
 available. The Update button keeps a manual path: it checks again and can open the release/download
 page, but it does not download or install MSI assets automatically.
 
-Release builds require a Windows self-hosted runner with the Autodesk products/SDK DLLs needed by
-the host projects. Cloud CI should only build host projects that use NuGet reference assemblies.
-MSIs must be built as x64 packages.
+Release tags run on GitHub-hosted Windows and create a draft release after cloud-safe checks pass.
+The workflow builds the Revit MSI because Revit uses NuGet reference assemblies. AutoCAD plugin
+projects still reference locally installed AutoCAD SDK DLLs, so the AutoCAD MSI must be built on an
+approved Autodesk workstation and uploaded to the draft release before publishing. MSIs must be
+built as x64 packages.
 
 Current Revit targets:
 

@@ -1,0 +1,110 @@
+name: publish-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version in X.Y.Z form
+        required: true
+        type: string
+      smoke_tests_completed:
+        description: Revit and AutoCAD installer smoke tests are complete
+        required: true
+        type: boolean
+      confirm:
+        description: Type PUBLISH to make the draft release public
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  publish-release:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Verify draft assets and publish
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+          SMOKE_TESTS_COMPLETED: ${{ inputs.smoke_tests_completed }}
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          if ($env:VERSION -notmatch '^\d+\.\d+\.\d+$') {
+            throw "Version must use X.Y.Z format. Got '$env:VERSION'."
+          }
+
+          if ($env:SMOKE_TESTS_COMPLETED -ne 'true') {
+            throw "Smoke tests must be completed before publishing."
+          }
+
+          if ($env:CONFIRM -ne 'PUBLISH') {
+            throw "Type PUBLISH in the confirmation input to publish the draft release."
+          }
+
+          $tag = "v$env:VERSION"
+          $headers = @{
+            "Authorization" = "Bearer $env:GH_TOKEN"
+            "Accept" = "application/vnd.github+json"
+            "X-GitHub-Api-Version" = "2022-11-28"
+            "User-Agent" = "algomim-release-publish"
+          }
+
+          try {
+            $release = Invoke-RestMethod `
+              -Uri "https://api.github.com/repos/$env:GITHUB_REPOSITORY/releases/tags/$tag" `
+              -Headers $headers
+          }
+          catch {
+            throw "Draft release '$tag' was not found. Create it by pushing the tag first."
+          }
+
+          if (-not $release.draft) {
+            throw "Release '$tag' is already public or is not a draft."
+          }
+
+          $requiredAssets = @(
+            "revit-mcp-$env:VERSION.msi",
+            "revit-mcp-$env:VERSION.msi.sha256",
+            "autocad-mcp-$env:VERSION.msi",
+            "autocad-mcp-$env:VERSION.msi.sha256"
+          )
+
+          $assetNames = @($release.assets | ForEach-Object { $_.name })
+          $missingAssets = @($requiredAssets | Where-Object { $assetNames -notcontains $_ })
+          if ($missingAssets.Count -gt 0) {
+            throw "Draft release '$tag' is missing required assets: $($missingAssets -join ', ')"
+          }
+
+          $assetDir = Join-Path $env:RUNNER_TEMP "release-assets"
+          New-Item -ItemType Directory -Force $assetDir | Out-Null
+          $downloadHeaders = $headers.Clone()
+          $downloadHeaders["Accept"] = "application/octet-stream"
+
+          foreach ($msiName in @("revit-mcp-$env:VERSION.msi", "autocad-mcp-$env:VERSION.msi")) {
+            $msiAsset = $release.assets | Where-Object { $_.name -eq $msiName } | Select-Object -First 1
+            $shaAsset = $release.assets | Where-Object { $_.name -eq "$msiName.sha256" } | Select-Object -First 1
+            $msiPath = Join-Path $assetDir $msiName
+            $shaPath = Join-Path $assetDir "$msiName.sha256"
+
+            Invoke-WebRequest -Uri $msiAsset.url -Headers $downloadHeaders -OutFile $msiPath
+            Invoke-WebRequest -Uri $shaAsset.url -Headers $downloadHeaders -OutFile $shaPath
+
+            $actualHash = (Get-FileHash $msiPath -Algorithm SHA256).Hash.ToLowerInvariant()
+            $expectedText = (Get-Content $shaPath -Raw).ToLowerInvariant()
+            if ($expectedText -notmatch [regex]::Escape($actualHash)) {
+              throw "Checksum mismatch for '$msiName'."
+            }
+          }
+
+          $body = @{ draft = $false; prerelease = $false } | ConvertTo-Json
+          Invoke-RestMethod `
+            -Method Patch `
+            -Uri "https://api.github.com/repos/$env:GITHUB_REPOSITORY/releases/$($release.id)" `
+            -Headers $headers `
+            -ContentType "application/json" `
+            -Body $body | Out-Null
+
+          Write-Host "Published release $tag."

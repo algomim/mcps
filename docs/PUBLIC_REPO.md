@@ -43,4 +43,6 @@ Before making or reviewing public changes:
 - Keep release assets out of the repository; publish installers only through GitHub Releases.
 - Avoid direct pushes to `main` except for urgent maintainer-only fixes.
 - Confirm CI is green before release.
-- Confirm tags and releases point only to the intended clean commits.
+- Confirm tags and draft releases point only to the intended clean commits.
+- Publish draft releases only after required Revit and AutoCAD installer assets are attached and
+  smoke tested.
