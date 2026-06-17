@@ -37,6 +37,7 @@ public sealed class RevitMcpApp : IExternalApplication
     private int _startupUpdateCheckStarted;
 
     public bool IsConnected => _host?.IsRunning == true;
+    public int? Port => _host?.IsRunning == true ? _host.Port : null;
 
     public Result OnStartup(UIControlledApplication application)
     {
@@ -149,6 +150,23 @@ public sealed class RevitMcpApp : IExternalApplication
                 System.Windows.Forms.MessageBoxButtons.OK,
                 System.Windows.Forms.MessageBoxIcon.Warning);
         }
+    }
+
+    public string GetStatusText()
+    {
+        if (IsConnected && Port is { } port)
+            return $"revit-mcp is connected.\n\nMCP URL: http://127.0.0.1:{port}/mcp\nHealth: http://127.0.0.1:{port}/health";
+
+        return "revit-mcp is disconnected.\n\nClick Connect to start the MCP server.";
+    }
+
+    public void ShowStatus()
+    {
+        System.Windows.Forms.MessageBox.Show(
+            GetStatusText(),
+            "Algomim MCP Status",
+            System.Windows.Forms.MessageBoxButtons.OK,
+            System.Windows.Forms.MessageBoxIcon.Information);
     }
 
     private void StartStartupUpdateCheck()

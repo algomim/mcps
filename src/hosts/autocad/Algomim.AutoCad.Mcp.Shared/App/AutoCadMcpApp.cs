@@ -137,11 +137,15 @@ public sealed class AutoCadMcpApp : IExtensionApplication
 
     public string GetStatusText()
     {
-        var status = IsConnected
-            ? $"connected on http://127.0.0.1:{Port}/mcp"
-            : "disconnected";
+        if (IsConnected && Port is { } port)
+            return $"autocad-mcp is connected.\n\nMCP URL: http://127.0.0.1:{port}/mcp\nHealth: http://127.0.0.1:{port}/health";
 
-        return $"autocad-mcp is {status}.";
+        return "autocad-mcp is disconnected.\n\nClick Connect to start the MCP server.";
+    }
+
+    public void ShowStatus()
+    {
+        AutoCadApplication.ShowAlertDialog(GetStatusText());
     }
 
     public void CheckForUpdates()

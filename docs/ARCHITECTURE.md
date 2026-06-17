@@ -27,6 +27,8 @@ Python, LISP, SCR files, and raw script execution are deliberately outside the A
 - Single Autodesk host instance, any agent -> connect to the one URL. Works in opencode, Codex,
   Claude. No broker.
 - Automatic multi-instance discovery -> announcement files under the local MCP runtime directory.
+- Host ribbon actions follow a shared shape: Connect/Disconnect, Status, and Update. Status shows
+  the exact `http://127.0.0.1:<port>/mcp` URL for external MCP clients.
 
 ## Tool model
 
@@ -173,7 +175,8 @@ the adapters aligned without forcing a full DI container into Autodesk add-ins.
 - **In-process MCP-over-HTTP server** using `HttpListener`.
 - **Per-instance port** from a pool starting at `48884`.
 - **Announcement** written to `%LOCALAPPDATA%\Temp\mcp-runtime\announcements\<host>-{pid}-{port}.json`.
-- **Ribbon** one toggle button: connect starts the HTTP server and writes the announcement; disconnect stops and removes it.
+- **Ribbon** standard actions: Connect/Disconnect starts or stops the HTTP server and writes/removes
+  the announcement; Status shows the MCP URL and health URL; Update checks for a newer host MSI.
 
 ## Versions, packaging, CI
 

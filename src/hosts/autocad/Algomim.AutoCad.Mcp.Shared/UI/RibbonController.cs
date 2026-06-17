@@ -11,6 +11,7 @@ public sealed class RibbonController
     private const string FallbackTabId = "Algomim.AutoCad.Mcp.AddIns.Tab";
     private const string PanelId = "Algomim.AutoCad.Mcp.Panel";
     private const string ButtonId = "Algomim.AutoCad.Mcp.Toggle";
+    private const string StatusButtonId = "Algomim.AutoCad.Mcp.Status";
     private const string UpdateButtonId = "Algomim.AutoCad.Mcp.Update";
     private const string AddInsTabTitle = "Add-ins";
     private const string PanelTitle = "autocad-mcp";
@@ -18,6 +19,7 @@ public sealed class RibbonController
     private readonly IMcpLogger _logger;
     private bool _missingRibbonLogged;
     private RibbonButton? _toggleButton;
+    private RibbonButton? _statusButton;
     private RibbonButton? _updateButton;
     private string _updateText = "Update";
     private string _updateToolTip = "Check GitHub Releases for a newer autocad-mcp MSI.";
@@ -79,6 +81,25 @@ public sealed class RibbonController
                 panel.Source.Items.Add(_toggleButton);
             }
 
+            _statusButton = panel.Source.Items
+                .OfType<RibbonButton>()
+                .FirstOrDefault(item => item.Id == StatusButtonId);
+
+            if (_statusButton is null)
+            {
+                _statusButton = new RibbonButton
+                {
+                    Id = StatusButtonId,
+                    Text = "Status",
+                    ShowText = true,
+                    Size = RibbonItemSize.Standard,
+                    CommandHandler = new RibbonCommandHandler(() => AutoCadMcpApp.Instance?.ShowStatus()),
+                    ToolTip = "Show the MCP HTTP endpoint for Codex, Claude, and other clients.",
+                };
+
+                panel.Source.Items.Add(_statusButton);
+            }
+
             _updateButton = panel.Source.Items
                 .OfType<RibbonButton>()
                 .FirstOrDefault(item => item.Id == UpdateButtonId);
@@ -112,12 +133,14 @@ public sealed class RibbonController
     {
         if (_toggleButton is null) return;
         _toggleButton.Text = $"Disconnect :{port}";
+        _toggleButton.ToolTip = $"Stop the autocad-mcp server. MCP URL: http://127.0.0.1:{port}/mcp";
     }
 
     public void SetDisconnected()
     {
         if (_toggleButton is null) return;
         _toggleButton.Text = "Connect";
+        _toggleButton.ToolTip = "Start the autocad-mcp server for this AutoCAD instance.";
     }
 
     public void SetUpdateAvailable(string latestVersion)

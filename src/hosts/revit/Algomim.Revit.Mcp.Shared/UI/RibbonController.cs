@@ -40,7 +40,17 @@ public sealed class RibbonController
             ToolTip = "Check GitHub Releases for a newer revit-mcp MSI.",
         };
 
+        var statusData = new PushButtonData(
+            "revitMcpStatus",
+            "Status",
+            Assembly.GetExecutingAssembly().Location,
+            typeof(ShowStatusCommand).FullName)
+        {
+            ToolTip = "Show the MCP HTTP endpoint for Codex, Claude, and other clients.",
+        };
+
         _toggleButton = panel.AddItem(toggleData) as PushButton;
+        panel.AddItem(statusData);
         _updateButton = panel.AddItem(updateData) as PushButton;
         ApplyUpdateButtonState();
     }
@@ -48,13 +58,19 @@ public sealed class RibbonController
     public void SetConnected(int port)
     {
         if (_toggleButton is not null)
+        {
             _toggleButton.ItemText = $"Disconnect\n:{port}";
+            _toggleButton.ToolTip = $"Stop the revit-mcp server. MCP URL: http://127.0.0.1:{port}/mcp";
+        }
     }
 
     public void SetDisconnected()
     {
         if (_toggleButton is not null)
+        {
             _toggleButton.ItemText = "Connect";
+            _toggleButton.ToolTip = "Start the revit-mcp server for this Revit instance.";
+        }
     }
 
     public void SetUpdateAvailable(string latestVersion)
