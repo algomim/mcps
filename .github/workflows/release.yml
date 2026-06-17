@@ -66,7 +66,13 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
-          wix build -arch x64 installer/revit-mcp.wxs -o dist/revit-mcp-${{ steps.release_version.outputs.version }}.msi
+          $wixVersion = (& wix --version).Trim()
+          $wixArgs = @()
+          if ($wixVersion -match '^(\d+)\.' -and [int]$Matches[1] -ge 7) {
+            $wixArgs += @("-acceptEula", "wix7")
+          }
+
+          wix build @wixArgs -arch x64 installer/revit-mcp.wxs -o dist/revit-mcp-${{ steps.release_version.outputs.version }}.msi
 
       - name: Generate checksums
         shell: pwsh
