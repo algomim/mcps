@@ -7,7 +7,7 @@
     <Authors>Algomim</Authors>
     <Copyright>Copyright (c) Algomim 2026</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <Version>0.1.16</Version>
+    <Version>0.1.17</Version>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
