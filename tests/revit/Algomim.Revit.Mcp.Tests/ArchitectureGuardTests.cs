@@ -191,6 +191,28 @@ public class ArchitectureGuardTests
     }
 
     [Fact]
+    public void Host_installers_include_shared_eula_license_ui()
+    {
+        var root = FindRepositoryRoot();
+        var eulaPath = Path.Combine(root, "installer", "legal", "EULA.rtf");
+        var installers = new[]
+        {
+            "revit-mcp.wxs",
+            "autocad-mcp.wxs",
+            "rhino-mcp.wxs",
+        };
+
+        Assert.True(File.Exists(eulaPath), "Shared MSI EULA file is missing.");
+        foreach (var installer in installers)
+        {
+            var text = File.ReadAllText(Path.Combine(root, "installer", installer));
+            Assert.Contains("xmlns:ui=\"http://wixtoolset.org/schemas/v4/wxs/ui\"", text);
+            Assert.Contains("<ui:WixUI Id=\"WixUI_Minimal\" />", text);
+            Assert.Contains("<WixVariable Id=\"WixUILicenseRtf\" Value=\"$(sys.SOURCEFILEDIR)legal\\EULA.rtf\" />", text);
+        }
+    }
+
+    [Fact]
     public void Local_install_script_validates_monorepo_paths_and_cleans_stale_plugin_files()
     {
         var root = FindRepositoryRoot();

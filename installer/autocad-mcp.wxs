@@ -4,15 +4,17 @@
   version-specific AutoCAD plugin binaries under Contents/2025 and Contents/2026.
 
   Build (requires the WiX dotnet tool and a prior Release build):
-    wix build installer/autocad-mcp.wxs -o dist/autocad-mcp.msi
+    wix build -ext WixToolset.UI.wixext installer/autocad-mcp.wxs -o dist/autocad-mcp.msi
 
   AutoCAD 2027 is intentionally not harvested until the local AutoCAD 2027 SDK/output exists.
 -->
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
   <Package Name="autocad-mcp" Manufacturer="Algomim" Version="0.1.23.0" UpgradeCode="B1B2C3D4-1111-2222-3333-444455556666" Scope="perMachine">
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of autocad-mcp is already installed." />
     <MediaTemplate EmbedCab="yes" />
+    <ui:WixUI Id="WixUI_Minimal" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(sys.SOURCEFILEDIR)legal\EULA.rtf" />
     <Launch Condition="Installed OR AUTOCAD2025INSTALLED OR AUTOCAD2026INSTALLED OR AUTOCAD2025DEFAULTPATH OR AUTOCAD2026DEFAULTPATH" Message="autocad-mcp requires AutoCAD 2025 or AutoCAD 2026." />
 
     <Property Id="AUTOCAD2025INSTALLED">

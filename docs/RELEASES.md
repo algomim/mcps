@@ -104,6 +104,7 @@ Before publishing:
 - No old tags or stale draft releases exist for the same version.
 - Every release-supported host installer asset was built by its approved build path.
 - Checksums are present for every release-supported host installer.
+- Every MSI includes the shared Algomim MCP EULA from `installer/legal/EULA.rtf`.
 - Release notes do not mention private paths, customer data, or internal-only context.
 - Smoke testing in the real host application has been completed when the change affects host
   runtime.

@@ -6,7 +6,9 @@ host MSIs instead of merging host-specific install logic into one file.
 ```text
 installer/
   revit-mcp.wxs              # current Revit MSI
-  rhino-mcp.wxs              # local Rhino skeleton MSI
+  rhino-mcp.wxs              # Rhino Yak-backed MSI
+  legal/
+    EULA.rtf                 # shared MSI license text
   hosts/
     revit/README.md
     autocad/README.md
@@ -21,3 +23,4 @@ Rules:
 - Bundle installers may depend on host MSIs, but host MSIs must remain independently installable.
 - Host installers own only host-specific folders, manifests, registry keys, and shortcuts.
 - Common package versioning comes from the repository root.
+- Host MSIs must use the shared WiX UI license screen with `installer/legal/EULA.rtf`.

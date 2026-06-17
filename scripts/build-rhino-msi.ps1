@@ -19,6 +19,7 @@ $version = $versionNode.InnerText.Trim()
 $dist = Join-Path $repoRoot "dist"
 $msiPath = Join-Path $dist "rhino-mcp-$version.msi"
 $utilExtensionRoot = Join-Path $env:USERPROFILE ".wix\extensions\WixToolset.Util.wixext"
+$uiExtensionRoot = Join-Path $env:USERPROFILE ".wix\extensions\WixToolset.UI.wixext"
 
 & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "build-rhino-yak.ps1") -Configuration $Configuration
 if ($LASTEXITCODE -ne 0) {
@@ -43,13 +44,21 @@ if ($null -eq $utilExtension) {
     throw "WiX Util extension was not found. Run: wix extension add WixToolset.Util.wixext --global"
 }
 
+$uiExtension = Get-ChildItem -LiteralPath $uiExtensionRoot -Recurse -Filter "WixToolset.UI.wixext.dll" -ErrorAction SilentlyContinue |
+    Sort-Object FullName -Descending |
+    Select-Object -First 1
+
+if ($null -eq $uiExtension) {
+    throw "WiX UI extension was not found. Run: wix extension add WixToolset.UI.wixext --global"
+}
+
 $wixVersion = (& wix --version).Trim()
 $wixArgs = @()
 if ($wixVersion -match '^(\d+)\.' -and [int]$Matches[1] -ge 7) {
     $wixArgs += @("-acceptEula", "wix7")
 }
 
-& wix build @wixArgs -arch x64 -ext $utilExtension.FullName -d "RhinoYakPackage=$yakPath" (Join-Path $repoRoot "installer\rhino-mcp.wxs") -o $msiPath
+& wix build @wixArgs -arch x64 -ext $utilExtension.FullName -ext $uiExtension.FullName -d "RhinoYakPackage=$yakPath" (Join-Path $repoRoot "installer\rhino-mcp.wxs") -o $msiPath
 if ($LASTEXITCODE -ne 0) {
     throw "Rhino MSI build failed."
 }

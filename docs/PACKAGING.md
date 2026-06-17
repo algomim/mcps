@@ -13,6 +13,9 @@ rhino-mcp.msi
 Host MSIs must remain independently installable. Future bundle installers should compose host MSIs
 instead of mixing host-specific registration rules into one setup.
 
+All host MSIs must show the shared Algomim MCP EULA from `installer/legal/EULA.rtf` through the
+standard WiX UI license flow.
+
 Packaging unit:
 
 ```text
@@ -70,7 +73,7 @@ Installed host add-ins check GitHub Releases for newer host-specific MSI assets:
 ```text
 revit-mcp-X.Y.Z.msi
 autocad-mcp-X.Y.Z.msi
-algomim-rhino-mcp-X.Y.Z-*.yak   # after Rhino becomes release-supported
+algomim-rhino-mcp-X.Y.Z-*.yak
 rhino-mcp-X.Y.Z.msi
 ```
 
