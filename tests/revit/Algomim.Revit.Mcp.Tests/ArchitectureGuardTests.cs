@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using System.Text.Json;
 using Algomim.Aec.Mcp.Core.Naming;
 using Xunit;
 
@@ -160,6 +161,33 @@ public class ArchitectureGuardTests
         Assert.Contains("ALGOMIM_MCP_DISCONNECT", autoCadCommands);
         Assert.Contains("ALGOMIM_MCP_STATUS", autoCadCommands);
         Assert.Contains("ALGOMIM_MCP_CHECK_UPDATE", autoCadCommands);
+    }
+
+    [Fact]
+    public void Release_host_config_requires_revit_autocad_and_rhino_artifacts()
+    {
+        var root = FindRepositoryRoot();
+        using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "release", "hosts.json")));
+        var hosts = document.RootElement.GetProperty("releaseSupportedHosts").EnumerateArray().ToList();
+        var hostIds = hosts.Select(host => host.GetProperty("id").GetString()).ToList();
+        var assetPatterns = hosts
+            .SelectMany(host => host.GetProperty("artifacts").EnumerateArray())
+            .SelectMany(artifact => new[]
+            {
+                artifact.GetProperty("assetPattern").GetString(),
+                artifact.GetProperty("checksumPattern").GetString()
+            })
+            .ToList();
+
+        Assert.Contains("revit", hostIds);
+        Assert.Contains("autocad", hostIds);
+        Assert.Contains("rhino", hostIds);
+        Assert.Contains("revit-mcp-{version}.msi", assetPatterns);
+        Assert.Contains("autocad-mcp-{version}.msi", assetPatterns);
+        Assert.Contains("rhino-mcp-{version}.msi", assetPatterns);
+        Assert.Contains("rhino-mcp-{version}.msi.sha256", assetPatterns);
+        Assert.Contains("algomim-rhino-mcp-{version}-rh8_*-win.yak", assetPatterns);
+        Assert.Contains("algomim-rhino-mcp-{version}-rh8_*-win.yak.sha256", assetPatterns);
     }
 
     [Fact]

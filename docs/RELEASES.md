@@ -28,7 +28,7 @@ not require CI or release workflow edits.
 The version script updates:
 
 - `Directory.Build.props` `Version`
-- Revit and AutoCAD WiX package versions
+- Revit, AutoCAD, and Rhino WiX package versions
 - AutoCAD `PackageContents.xml` `AppVersion`
 
 ## Tagging
@@ -54,13 +54,18 @@ revit-mcp-X.Y.Z.msi
 revit-mcp-X.Y.Z.msi.sha256
 ```
 
-3. Build every remaining release-supported host MSI on the required approved workstation or build
-   environment for that host.
-4. Upload the remaining host MSI files and checksums to the same draft release. Currently:
+3. Build every remaining release-supported host artifact on the required approved workstation or
+   build environment for that host.
+4. Upload the remaining host files and checksums to the same draft release. Required patterns live
+   in `release/hosts.json`. Currently:
 
 ```text
 autocad-mcp-X.Y.Z.msi
 autocad-mcp-X.Y.Z.msi.sha256
+rhino-mcp-X.Y.Z.msi
+rhino-mcp-X.Y.Z.msi.sha256
+algomim-rhino-mcp-X.Y.Z-rh8_*-win.yak
+algomim-rhino-mcp-X.Y.Z-rh8_*-win.yak.sha256
 ```
 
 5. Smoke test every release-supported host installer.
@@ -78,13 +83,17 @@ revit-mcp-X.Y.Z.msi
 revit-mcp-X.Y.Z.msi.sha256
 autocad-mcp-X.Y.Z.msi
 autocad-mcp-X.Y.Z.msi.sha256
+rhino-mcp-X.Y.Z.msi
+rhino-mcp-X.Y.Z.msi.sha256
+algomim-rhino-mcp-X.Y.Z-rh8_*-win.yak
+algomim-rhino-mcp-X.Y.Z-rh8_*-win.yak.sha256
 ```
 
 Future release-supported hosts must follow the same `<host>-mcp-X.Y.Z.msi` and
-`<host>-mcp-X.Y.Z.msi.sha256` naming pattern and be added to the publish verification.
+`<host>-mcp-X.Y.Z.msi.sha256` naming pattern and be added to `release/hosts.json`.
 
 The in-product update check searches GitHub Releases for host-specific MSI assets with
-`revit-mcp-` or `autocad-mcp-` prefixes.
+`revit-mcp-`, `autocad-mcp-`, or `rhino-mcp-` prefixes.
 
 ## Public Release Checklist
 

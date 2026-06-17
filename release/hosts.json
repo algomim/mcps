@@ -1,0 +1,38 @@
+{
+  "releaseSupportedHosts": [
+    {
+      "id": "revit",
+      "displayName": "Revit",
+      "artifacts": [
+        {
+          "assetPattern": "revit-mcp-{version}.msi",
+          "checksumPattern": "revit-mcp-{version}.msi.sha256"
+        }
+      ]
+    },
+    {
+      "id": "autocad",
+      "displayName": "AutoCAD",
+      "artifacts": [
+        {
+          "assetPattern": "autocad-mcp-{version}.msi",
+          "checksumPattern": "autocad-mcp-{version}.msi.sha256"
+        }
+      ]
+    },
+    {
+      "id": "rhino",
+      "displayName": "Rhino",
+      "artifacts": [
+        {
+          "assetPattern": "rhino-mcp-{version}.msi",
+          "checksumPattern": "rhino-mcp-{version}.msi.sha256"
+        },
+        {
+          "assetPattern": "algomim-rhino-mcp-{version}-rh8_*-win.yak",
+          "checksumPattern": "algomim-rhino-mcp-{version}-rh8_*-win.yak.sha256"
+        }
+      ]
+    }
+  ]
+}

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  WiX v4/v5 MSI for local rhino-mcp skeleton testing. Installs the bundled Yak package and asks
+  WiX v4/v5/v7 MSI for rhino-mcp. Installs the bundled Yak package and asks
   Rhino 8's Yak.exe to install it into Rhino Package Manager.
-  This is not a public release asset until Rhino installer smoke testing is complete.
 
   Build (requires the WiX dotnet tool and a prior Yak package build):
     powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/build-rhino-msi.ps1
@@ -12,7 +11,7 @@
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of rhino-mcp is already installed." />
     <MediaTemplate EmbedCab="yes" />
-    <Launch Condition="Installed OR RHINO8DEFAULTPATH" Message="rhino-mcp requires Rhino 8 for this local skeleton installer." />
+    <Launch Condition="Installed OR RHINO8DEFAULTPATH" Message="rhino-mcp requires Rhino 8." />
 
     <Property Id="RHINO8DEFAULTPATH">
       <DirectorySearch Id="DetectRhino8DefaultDirectory" Path="[ProgramFiles64Folder]Rhino 8\System">

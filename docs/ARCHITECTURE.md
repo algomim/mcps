@@ -2,8 +2,8 @@
 
 ## What it is
 
-An AEC MCP monorepo. Autodesk Revit and AutoCAD are the first release-supported host adapters;
-Rhino has an initial separate host skeleton. The Revit adapter is hosted **inside Revit** and exposes:
+An AEC MCP monorepo. Autodesk Revit, AutoCAD, and Rhino are release-supported host adapters. The
+Revit adapter is hosted **inside Revit** and exposes:
 
 - typed Revit tools for common read, write, create, graphics, and export operations;
 - `script_execute` for advanced C# execution against the live Revit API;
@@ -12,8 +12,7 @@ Rhino has an initial separate host skeleton. The Revit adapter is hosted **insid
 Legacy aliases `execute-script` and `discover-api` remain available for backward compatibility.
 The AutoCAD adapter is hosted **inside AutoCAD** and exposes a C#/.NET API-first typed tool catalog.
 Python, LISP, SCR files, and raw script execution are deliberately outside the AutoCAD foundation.
-The Rhino adapter skeleton is hosted **inside Rhino** and wires lifecycle commands plus an empty MCP
-catalog before typed RhinoCommon tools are added.
+The Rhino adapter is hosted **inside Rhino** and exposes typed RhinoCommon and Grasshopper tools.
 
 ## Runtime topology
 
@@ -187,8 +186,7 @@ the adapters aligned without forcing a full DI container into Autodesk add-ins.
 
 - Revit 2025 / 2026: `net8.0-windows`.
 - Revit 2027: `net10.0-windows`.
-- Host-specific MSI via WiX. Revit and AutoCAD are current release-supported packages; Rhino has a
-  reserved MSI boundary and host skeleton.
+- Host-specific MSI via WiX. Rhino additionally publishes a Yak package for the package-manager path.
 - CI builds against Nice3point Revit API reference packages, so Revit does not need to be installed to build.
 - Release-supported host smoke tests are still required before public release.
 

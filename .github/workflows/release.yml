@@ -95,7 +95,8 @@ jobs:
             This draft was created by the cloud-safe release workflow.
 
             Before publishing:
-            - Build and upload every remaining release-supported host MSI on its approved build environment.
-            - Include a `.sha256` file for each uploaded host MSI.
+            - Build and upload every remaining release-supported host artifact on its approved build environment.
+            - Required artifact patterns are listed in `release/hosts.json`.
+            - Include a `.sha256` file for each uploaded host artifact.
             - Smoke test every release-supported host installer.
             - Run the `publish-release` workflow with the required confirmation.

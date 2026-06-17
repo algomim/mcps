@@ -24,6 +24,8 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 15
     steps:
+      - uses: actions/checkout@v4
+
       - name: Verify draft assets and publish
         shell: pwsh
         env:
@@ -52,12 +54,17 @@ jobs:
             "User-Agent" = "algomim-release-publish"
           }
 
-          try {
-            $release = Invoke-RestMethod `
-              -Uri "https://api.github.com/repos/$env:GITHUB_REPOSITORY/releases/tags/$tag" `
-              -Headers $headers
-          }
-          catch {
+          $release = $null
+          $page = 1
+          do {
+            $pageReleases = @(Invoke-RestMethod `
+              -Uri "https://api.github.com/repos/$env:GITHUB_REPOSITORY/releases?per_page=100&page=$page" `
+              -Headers $headers)
+            $release = $pageReleases | Where-Object { $_.tag_name -eq $tag } | Select-Object -First 1
+            $page += 1
+          } while ($null -eq $release -and $pageReleases.Count -eq 100)
+
+          if ($null -eq $release) {
             throw "Draft release '$tag' was not found. Create it by pushing the tag first."
           }
 
@@ -65,17 +72,22 @@ jobs:
             throw "Release '$tag' is already public or is not a draft."
           }
 
-          # Current release-supported hosts. Add future hosts here when they become public release
-          # targets, following the <host>-mcp-X.Y.Z.msi naming pattern.
-          $requiredAssets = @(
-            "revit-mcp-$env:VERSION.msi",
-            "revit-mcp-$env:VERSION.msi.sha256",
-            "autocad-mcp-$env:VERSION.msi",
-            "autocad-mcp-$env:VERSION.msi.sha256"
-          )
+          $configPath = Join-Path $env:GITHUB_WORKSPACE "release/hosts.json"
+          $config = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
 
           $assetNames = @($release.assets | ForEach-Object { $_.name })
-          $missingAssets = @($requiredAssets | Where-Object { $assetNames -notcontains $_ })
+          $requiredPatterns = @()
+          foreach ($host in @($config.releaseSupportedHosts)) {
+            foreach ($artifact in @($host.artifacts)) {
+              $requiredPatterns += $artifact.assetPattern.Replace("{version}", $env:VERSION)
+              $requiredPatterns += $artifact.checksumPattern.Replace("{version}", $env:VERSION)
+            }
+          }
+
+          $missingAssets = @($requiredPatterns | Where-Object {
+            $pattern = $_
+            @($assetNames | Where-Object { $_ -like $pattern }).Count -eq 0
+          })
           if ($missingAssets.Count -gt 0) {
             throw "Draft release '$tag' is missing required assets: $($missingAssets -join ', ')"
           }
@@ -85,19 +97,37 @@ jobs:
           $downloadHeaders = $headers.Clone()
           $downloadHeaders["Accept"] = "application/octet-stream"
 
-          foreach ($msiName in @("revit-mcp-$env:VERSION.msi", "autocad-mcp-$env:VERSION.msi")) {
-            $msiAsset = $release.assets | Where-Object { $_.name -eq $msiName } | Select-Object -First 1
-            $shaAsset = $release.assets | Where-Object { $_.name -eq "$msiName.sha256" } | Select-Object -First 1
-            $msiPath = Join-Path $assetDir $msiName
-            $shaPath = Join-Path $assetDir "$msiName.sha256"
+          function Find-ReleaseAsset {
+            param([Parameter(Mandatory)][string]$Pattern)
 
-            Invoke-WebRequest -Uri $msiAsset.url -Headers $downloadHeaders -OutFile $msiPath
-            Invoke-WebRequest -Uri $shaAsset.url -Headers $downloadHeaders -OutFile $shaPath
+            $matches = @($release.assets | Where-Object { $_.name -like $Pattern })
+            if ($matches.Count -eq 0) {
+              throw "Required release asset was not found: $Pattern"
+            }
+            if ($matches.Count -gt 1) {
+              throw "Release asset pattern '$Pattern' matched multiple assets: $($matches.name -join ', ')"
+            }
 
-            $actualHash = (Get-FileHash $msiPath -Algorithm SHA256).Hash.ToLowerInvariant()
-            $expectedText = (Get-Content $shaPath -Raw).ToLowerInvariant()
-            if ($expectedText -notmatch [regex]::Escape($actualHash)) {
-              throw "Checksum mismatch for '$msiName'."
+            return $matches[0]
+          }
+
+          foreach ($host in @($config.releaseSupportedHosts)) {
+            foreach ($artifact in @($host.artifacts)) {
+              $assetPattern = $artifact.assetPattern.Replace("{version}", $env:VERSION)
+              $checksumPattern = $artifact.checksumPattern.Replace("{version}", $env:VERSION)
+              $asset = Find-ReleaseAsset -Pattern $assetPattern
+              $shaAsset = Find-ReleaseAsset -Pattern $checksumPattern
+              $assetPath = Join-Path $assetDir $asset.name
+              $shaPath = Join-Path $assetDir $shaAsset.name
+
+              Invoke-WebRequest -Uri $asset.url -Headers $downloadHeaders -OutFile $assetPath
+              Invoke-WebRequest -Uri $shaAsset.url -Headers $downloadHeaders -OutFile $shaPath
+
+              $actualHash = (Get-FileHash $assetPath -Algorithm SHA256).Hash.ToLowerInvariant()
+              $expectedText = (Get-Content $shaPath -Raw).ToLowerInvariant()
+              if ($expectedText -notmatch [regex]::Escape($actualHash)) {
+                throw "Checksum mismatch for '$($asset.name)'."
+              }
             }
           }
 

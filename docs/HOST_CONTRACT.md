@@ -77,4 +77,4 @@ Release assets must not be committed to the repository.
 |---|---|---|---|---|
 | Revit | Implemented | Implemented | Implemented | `revit-mcp-X.Y.Z.msi` |
 | AutoCAD | Implemented | Implemented | Implemented | `autocad-mcp-X.Y.Z.msi` |
-| Rhino | Empty skeleton | Command skeleton | Local MSI + Yak skeleton | Future `.yak` package |
+| Rhino | Implemented | Implemented | Yak-backed MSI + Yak | `rhino-mcp-X.Y.Z.msi`, `algomim-rhino-mcp-X.Y.Z-rh8_*-win.yak` |
