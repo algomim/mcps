@@ -54,11 +54,18 @@ drawing, block, dimension, annotation, document, and DXF export workflows.
 ## How it works
 
 ```text
-OpenCode / Codex / Claude  --MCP (localhost)-->  revit-mcp (in Revit)  -->  Revit API
-        (agent host)                              connect/disconnect       (UI thread + transaction)
+OpenCode / Codex / Claude  --MCP (localhost)-->  host-mcp (in Revit/AutoCAD)  -->  Autodesk API
+        (agent host)                              connect/status/update        (UI thread + transaction)
 ```
 
-The Revit add-in hosts the MCP endpoint in-process. A single ribbon button toggles it: **click to connect, click again to disconnect**. There is no separate connector executable; the installer ships the add-in only.
+Each host add-in runs the MCP endpoint in-process and uses the same ribbon shape:
+
+- **Connect/Disconnect** starts or stops the local MCP HTTP server.
+- **Status** shows the exact MCP URL, such as `http://127.0.0.1:<port>/mcp`, for Codex, Claude,
+  or another MCP client.
+- **Update** checks GitHub Releases for a newer host MSI.
+
+There is no separate connector executable; the installer ships the add-in only.
 
 ## Supported Revit versions
 

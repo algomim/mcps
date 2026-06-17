@@ -26,8 +26,10 @@ public sealed class AutoCadMcpCommands
     [CommandMethod("ALGOMIM_MCP_STATUS", CommandFlags.Session)]
     public void Status()
     {
-        var status = AutoCadMcpApp.Instance?.GetStatusText() ?? "autocad-mcp is not initialized.";
-        Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument?.Editor.WriteMessage($"\n[Algomim MCP] {status}");
+        if (AutoCadMcpApp.Instance is { } app)
+            app.ShowStatus();
+        else
+            Autodesk.AutoCAD.ApplicationServices.Application.ShowAlertDialog("autocad-mcp is not initialized.");
     }
 
     [CommandMethod("ALGOMIM_MCP_CHECK_UPDATE", CommandFlags.Session)]

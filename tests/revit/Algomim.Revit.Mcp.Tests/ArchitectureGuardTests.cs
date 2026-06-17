@@ -119,6 +119,29 @@ public class ArchitectureGuardTests
     }
 
     [Fact]
+    public void Host_ribbons_expose_standard_connection_status_and_update_actions()
+    {
+        var root = FindRepositoryRoot();
+        var revitRibbon = File.ReadAllText(Path.Combine(root, "src", "hosts", "revit", "Algomim.Revit.Mcp.Shared", "UI", "RibbonController.cs"));
+        var revitStatus = File.ReadAllText(Path.Combine(root, "src", "hosts", "revit", "Algomim.Revit.Mcp.Shared", "UI", "ShowStatusCommand.cs"));
+        var revitApp = File.ReadAllText(Path.Combine(root, "src", "hosts", "revit", "Algomim.Revit.Mcp.Shared", "App", "RevitMcpApp.cs"));
+        var autoCadRibbon = File.ReadAllText(Path.Combine(root, "src", "hosts", "autocad", "Algomim.AutoCad.Mcp.Shared", "UI", "RibbonController.cs"));
+        var autoCadApp = File.ReadAllText(Path.Combine(root, "src", "hosts", "autocad", "Algomim.AutoCad.Mcp.Shared", "App", "AutoCadMcpApp.cs"));
+
+        Assert.Contains("revitMcpToggle", revitRibbon);
+        Assert.Contains("revitMcpStatus", revitRibbon);
+        Assert.Contains("revitMcpUpdate", revitRibbon);
+        Assert.Contains("ShowStatusCommand", revitStatus);
+        Assert.Contains("MCP URL: http://127.0.0.1:{port}/mcp", revitApp);
+
+        Assert.Contains("ButtonId", autoCadRibbon);
+        Assert.Contains("StatusButtonId", autoCadRibbon);
+        Assert.Contains("UpdateButtonId", autoCadRibbon);
+        Assert.Contains("ShowStatus()", autoCadApp);
+        Assert.Contains("MCP URL: http://127.0.0.1:{port}/mcp", autoCadApp);
+    }
+
+    [Fact]
     public void Local_install_script_validates_monorepo_paths_and_cleans_stale_plugin_files()
     {
         var root = FindRepositoryRoot();
