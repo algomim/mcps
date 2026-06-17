@@ -62,11 +62,19 @@
     </Component>
 
     <ComponentGroup Id="AutoCadFiles2025" Directory="AutoCad2025Folder">
-      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2025\bin\Release\net8.0-windows\**" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2025\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Abstractions.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2025\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Core.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2025\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Tooling.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2025\bin\Release\net8.0-windows\Algomim.AutoCad.Mcp.2025.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2025\bin\Release\net8.0-windows\PackageContents.xml" />
     </ComponentGroup>
 
     <ComponentGroup Id="AutoCadFiles2026" Directory="AutoCad2026Folder">
-      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2026\bin\Release\net8.0-windows\**" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2026\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Abstractions.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2026\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Core.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2026\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Tooling.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2026\bin\Release\net8.0-windows\Algomim.AutoCad.Mcp.2026.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2026\bin\Release\net8.0-windows\PackageContents.xml" />
     </ComponentGroup>
 
   </Package>

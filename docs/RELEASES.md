@@ -60,6 +60,5 @@ Before publishing:
 - No old tags or stale draft releases exist for the same version.
 - Installer assets were built by the release workflow or approved release runner.
 - Checksums are present.
-- MSI payloads include `Algomim.Aec.Mcp.Updater.exe` for in-product update installation.
 - Release notes do not mention private paths, customer data, or internal-only context.
 - Smoke testing in real Revit/AutoCAD has been completed when the change affects host runtime.
