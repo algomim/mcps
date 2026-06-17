@@ -9,7 +9,7 @@
   The <Files> harvesting pulls from each version project's Release output, so build first.
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-  <Package Name="revit-mcp" Manufacturer="Algomim" Version="0.1.17.0" UpgradeCode="A1B2C3D4-1111-2222-3333-444455556666" Scope="perMachine">
+  <Package Name="revit-mcp" Manufacturer="Algomim" Version="0.1.18.0" UpgradeCode="A1B2C3D4-1111-2222-3333-444455556666" Scope="perMachine">
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of revit-mcp is already installed." />
     <MediaTemplate EmbedCab="yes" />
