@@ -27,7 +27,7 @@ jobs:
 
       # Cloud CI only builds projects that do not require a locally installed Autodesk product.
       # Revit builds against NuGet reference assemblies. AutoCAD plugin projects require installed
-      # AutoCAD SDK DLLs and are built by the release runner/local Autodesk workstation.
+      # AutoCAD SDK DLLs and are built on an approved Autodesk workstation before publishing.
       - name: Build common packages
         run: |
           dotnet build src/common/Algomim.Aec.Mcp.Abstractions/Algomim.Aec.Mcp.Abstractions.csproj -c Release
