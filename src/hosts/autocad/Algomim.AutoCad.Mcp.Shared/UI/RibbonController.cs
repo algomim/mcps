@@ -18,6 +18,9 @@ public sealed class RibbonController
     private readonly IMcpLogger _logger;
     private bool _missingRibbonLogged;
     private RibbonButton? _toggleButton;
+    private RibbonButton? _updateButton;
+    private string _updateText = "Update";
+    private string _updateToolTip = "Check GitHub Releases for a newer autocad-mcp MSI.";
 
     public RibbonController(IMcpLogger logger)
     {
@@ -76,9 +79,13 @@ public sealed class RibbonController
                 panel.Source.Items.Add(_toggleButton);
             }
 
-            if (!panel.Source.Items.OfType<RibbonButton>().Any(item => item.Id == UpdateButtonId))
+            _updateButton = panel.Source.Items
+                .OfType<RibbonButton>()
+                .FirstOrDefault(item => item.Id == UpdateButtonId);
+
+            if (_updateButton is null)
             {
-                panel.Source.Items.Add(new RibbonButton
+                _updateButton = new RibbonButton
                 {
                     Id = UpdateButtonId,
                     Text = "Update",
@@ -86,9 +93,12 @@ public sealed class RibbonController
                     Size = RibbonItemSize.Standard,
                     CommandHandler = new RibbonCommandHandler(() => AutoCadMcpApp.Instance?.CheckForUpdates()),
                     ToolTip = "Check GitHub Releases for a newer autocad-mcp MSI.",
-                });
+                };
+
+                panel.Source.Items.Add(_updateButton);
             }
 
+            ApplyUpdateButtonState();
             return _toggleButton is not null;
         }
         catch (Exception ex)
@@ -108,6 +118,35 @@ public sealed class RibbonController
     {
         if (_toggleButton is null) return;
         _toggleButton.Text = "Connect";
+    }
+
+    public void SetUpdateAvailable(string latestVersion)
+        => SetUpdateButton(
+            "Update Available",
+            $"autocad-mcp {latestVersion} is available. Click to open the release page.");
+
+    public void SetUpToDate(string currentVersion)
+        => SetUpdateButton(
+            "Up to date",
+            $"autocad-mcp is up to date ({currentVersion}). Click to check again.");
+
+    public void SetUpdateUnknown()
+        => SetUpdateButton(
+            "Update",
+            "Check GitHub Releases for a newer autocad-mcp MSI.");
+
+    private void SetUpdateButton(string text, string toolTip)
+    {
+        _updateText = text;
+        _updateToolTip = toolTip;
+        ApplyUpdateButtonState();
+    }
+
+    private void ApplyUpdateButtonState()
+    {
+        if (_updateButton is null) return;
+        _updateButton.Text = _updateText;
+        _updateButton.ToolTip = _updateToolTip;
     }
 
     private static RibbonTab? FindAddInsTab(RibbonControl ribbon)

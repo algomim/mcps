@@ -149,6 +149,7 @@ public sealed class AutoCadMcpApp : IExtensionApplication
         try
         {
             var update = CheckForUpdatesCore();
+            ApplyUpdateButtonState(update);
 
             if (!string.IsNullOrWhiteSpace(update.Message))
             {
@@ -191,9 +192,6 @@ public sealed class AutoCadMcpApp : IExtensionApplication
                     return;
 
                 var update = CheckForUpdatesCore();
-                if (!update.IsUpdateAvailable)
-                    return;
-
                 if (!ReferenceEquals(Instance, this))
                     return;
 
@@ -214,6 +212,20 @@ public sealed class AutoCadMcpApp : IExtensionApplication
             .CheckAsync(currentVersion, "autocad-mcp-")
             .GetAwaiter()
             .GetResult();
+    }
+
+    private void ApplyUpdateButtonState(ReleaseUpdateInfo update)
+    {
+        if (!string.IsNullOrWhiteSpace(update.Message))
+        {
+            _ribbon?.SetUpdateUnknown();
+            return;
+        }
+
+        if (update.IsUpdateAvailable)
+            _ribbon?.SetUpdateAvailable(update.LatestVersion);
+        else
+            _ribbon?.SetUpToDate(update.CurrentVersion);
     }
 
     private static string? GetDocumentName()
@@ -288,6 +300,10 @@ public sealed class AutoCadMcpApp : IExtensionApplication
         var update = _pendingStartupUpdate;
         _pendingStartupUpdate = null;
         if (update is null)
+            return;
+
+        ApplyUpdateButtonState(update);
+        if (!update.IsUpdateAvailable || !string.IsNullOrWhiteSpace(update.Message))
             return;
 
         AutoCadApplication.ShowAlertDialog(

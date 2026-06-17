@@ -103,6 +103,7 @@ public sealed class RevitMcpApp : IExternalApplication
         try
         {
             var update = CheckForUpdatesCore();
+            ApplyUpdateButtonState(update);
 
             if (!string.IsNullOrWhiteSpace(update.Message))
             {
@@ -164,9 +165,6 @@ public sealed class RevitMcpApp : IExternalApplication
                     return;
 
                 var update = CheckForUpdatesCore();
-                if (!update.IsUpdateAvailable)
-                    return;
-
                 var dispatcher = _dispatcher;
                 if (dispatcher is null || !ReferenceEquals(Instance, this))
                     return;
@@ -174,6 +172,10 @@ public sealed class RevitMcpApp : IExternalApplication
                 var notifyTask = dispatcher.InvokeOnUiThreadAsync(_ =>
                 {
                     if (!ReferenceEquals(Instance, this))
+                        return;
+
+                    ApplyUpdateButtonState(update);
+                    if (!update.IsUpdateAvailable || !string.IsNullOrWhiteSpace(update.Message))
                         return;
 
                     System.Windows.Forms.MessageBox.Show(
@@ -202,6 +204,20 @@ public sealed class RevitMcpApp : IExternalApplication
             .CheckAsync(currentVersion, "revit-mcp-")
             .GetAwaiter()
             .GetResult();
+    }
+
+    private void ApplyUpdateButtonState(ReleaseUpdateInfo update)
+    {
+        if (!string.IsNullOrWhiteSpace(update.Message))
+        {
+            _ribbon?.SetUpdateUnknown();
+            return;
+        }
+
+        if (update.IsUpdateAvailable)
+            _ribbon?.SetUpdateAvailable(update.LatestVersion);
+        else
+            _ribbon?.SetUpToDate(update.CurrentVersion);
     }
 
     private void Connect(UIApplication uiApp)
