@@ -34,6 +34,7 @@ public sealed class RevitMcpApp : IExternalApplication
     private HttpListenerMcpHost? _host;
     private AnnouncementWriter? _announcements;
     private RibbonController? _ribbon;
+    private int _startupUpdateCheckStarted;
 
     public bool IsConnected => _host?.IsRunning == true;
 
@@ -62,6 +63,7 @@ public sealed class RevitMcpApp : IExternalApplication
             _ribbon.Build();
 
             _logger.Info("revit-mcp started.");
+            StartStartupUpdateCheck();
             return Result.Succeeded;
         }
         catch (Exception ex)
@@ -100,11 +102,7 @@ public sealed class RevitMcpApp : IExternalApplication
     {
         try
         {
-            var currentVersion = typeof(RevitMcpApp).Assembly.GetName().Version?.ToString() ?? "0.0.0";
-            var update = new GitHubReleaseUpdateChecker("algomim", "mcps")
-                .CheckAsync(currentVersion, "revit-mcp-")
-                .GetAwaiter()
-                .GetResult();
+            var update = CheckForUpdatesCore();
 
             if (!string.IsNullOrWhiteSpace(update.Message))
             {
@@ -131,7 +129,7 @@ public sealed class RevitMcpApp : IExternalApplication
                 : $"Installer: {update.InstallerName}";
             var result = System.Windows.Forms.MessageBox.Show(
                 $"revit-mcp {update.LatestVersion} is available. You have {update.CurrentVersion}.\n\n" +
-                $"{installerText}\n\nDownload now and install automatically after Revit closes?",
+                $"{installerText}\n\nOpen the release page to download and install it manually?",
                 "Algomim MCP Update",
                 System.Windows.Forms.MessageBoxButtons.YesNo,
                 System.Windows.Forms.MessageBoxIcon.Information);
@@ -139,22 +137,6 @@ public sealed class RevitMcpApp : IExternalApplication
             if (result != System.Windows.Forms.DialogResult.Yes)
                 return;
 
-            var launch = UpdateInstallerLauncher.Launch(update, "Revit");
-            if (launch.Started)
-            {
-                System.Windows.Forms.MessageBox.Show(
-                    launch.Message,
-                    "Algomim MCP Update",
-                    System.Windows.Forms.MessageBoxButtons.OK,
-                    System.Windows.Forms.MessageBoxIcon.Information);
-                return;
-            }
-
-            System.Windows.Forms.MessageBox.Show(
-                $"{launch.Message}\n\nOpening the release page so you can run the MSI manually.",
-                "Algomim MCP Update",
-                System.Windows.Forms.MessageBoxButtons.OK,
-                System.Windows.Forms.MessageBoxIcon.Information);
             OpenUrl(update.InstallerUrl ?? update.ReleaseUrl);
         }
         catch (Exception ex)
@@ -166,6 +148,60 @@ public sealed class RevitMcpApp : IExternalApplication
                 System.Windows.Forms.MessageBoxButtons.OK,
                 System.Windows.Forms.MessageBoxIcon.Warning);
         }
+    }
+
+    private void StartStartupUpdateCheck()
+    {
+        if (System.Threading.Interlocked.Exchange(ref _startupUpdateCheckStarted, 1) == 1)
+            return;
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+                if (!ReferenceEquals(Instance, this))
+                    return;
+
+                var update = CheckForUpdatesCore();
+                if (!update.IsUpdateAvailable)
+                    return;
+
+                var dispatcher = _dispatcher;
+                if (dispatcher is null || !ReferenceEquals(Instance, this))
+                    return;
+
+                var notifyTask = dispatcher.InvokeOnUiThreadAsync(_ =>
+                {
+                    if (!ReferenceEquals(Instance, this))
+                        return;
+
+                    System.Windows.Forms.MessageBox.Show(
+                        $"revit-mcp {update.LatestVersion} is available. You have {update.CurrentVersion}.\n\n" +
+                        "Use the Update button to open the release page when you are ready to install it.",
+                        "Algomim MCP Update",
+                        System.Windows.Forms.MessageBoxButtons.OK,
+                        System.Windows.Forms.MessageBoxIcon.Information);
+                });
+
+                _ = notifyTask.ContinueWith(
+                    task => _logger.Warn($"Startup update notification failed: {task.Exception?.GetBaseException().Message}"),
+                    TaskContinuationOptions.OnlyOnFaulted);
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn($"Startup update check failed: {ex.Message}");
+            }
+        });
+    }
+
+    private static ReleaseUpdateInfo CheckForUpdatesCore()
+    {
+        var currentVersion = typeof(RevitMcpApp).Assembly.GetName().Version?.ToString() ?? "0.0.0";
+        return new GitHubReleaseUpdateChecker("algomim", "mcps")
+            .CheckAsync(currentVersion, "revit-mcp-")
+            .GetAwaiter()
+            .GetResult();
     }
 
     private void Connect(UIApplication uiApp)

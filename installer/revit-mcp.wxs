@@ -72,7 +72,12 @@
 
     <!-- Revit 2025 (net8) -->
     <ComponentGroup Id="Files2025" Directory="Plugin2025">
-      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\**" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Abstractions.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Core.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Tooling.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Algomim.Revit.Mcp.2025.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Microsoft.CodeAnalysis*.dll" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\**\Microsoft.CodeAnalysis*.resources.dll" />
     </ComponentGroup>
     <Component Id="Addin2025" Directory="Addins2025">
       <File Source="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\Algomim.Revit.Mcp.2025.addin" />
@@ -80,7 +85,12 @@
 
     <!-- Revit 2026 (net8) -->
     <ComponentGroup Id="Files2026" Directory="Plugin2026">
-      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\**" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Abstractions.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Core.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Tooling.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Algomim.Revit.Mcp.2026.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Microsoft.CodeAnalysis*.dll" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\**\Microsoft.CodeAnalysis*.resources.dll" />
     </ComponentGroup>
     <Component Id="Addin2026" Directory="Addins2026">
       <File Source="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\Algomim.Revit.Mcp.2026.addin" />
@@ -88,7 +98,12 @@
 
     <!-- Revit 2027 (net10) -->
     <ComponentGroup Id="Files2027" Directory="Plugin2027">
-      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\**" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Algomim.Aec.Mcp.Abstractions.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Algomim.Aec.Mcp.Core.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Algomim.Aec.Mcp.Tooling.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Algomim.Revit.Mcp.2027.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Microsoft.CodeAnalysis*.dll" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\**\Microsoft.CodeAnalysis*.resources.dll" />
     </ComponentGroup>
     <Component Id="Addin2027" Directory="Addins2027">
       <File Source="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\Algomim.Revit.Mcp.2027.addin" />

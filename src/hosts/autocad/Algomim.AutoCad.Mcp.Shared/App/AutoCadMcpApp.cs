@@ -30,6 +30,8 @@ public sealed class AutoCadMcpApp : IExtensionApplication
     private RibbonController? _ribbon;
     private McpHostProfile? _profile;
     private bool _isRibbonBuildDeferred;
+    private int _startupUpdateCheckStarted;
+    private ReleaseUpdateInfo? _pendingStartupUpdate;
 
     public bool IsConnected => _host?.IsRunning == true;
     public int? Port => _host?.IsRunning == true ? _host.Port : null;
@@ -62,6 +64,7 @@ public sealed class AutoCadMcpApp : IExtensionApplication
 
             WriteEditorMessage("autocad-mcp loaded. Use ALGOMIM_MCP_TOGGLE or the Add-ins ribbon panel to connect.");
             _logger.Info("autocad-mcp initialized.");
+            StartStartupUpdateCheck();
         }
         catch (System.Exception ex)
         {
@@ -76,6 +79,7 @@ public sealed class AutoCadMcpApp : IExtensionApplication
         {
             Disconnect();
             AutoCadApplication.Idle -= OnAutoCadIdle;
+            AutoCadApplication.Idle -= OnStartupUpdateIdle;
             AppDomain.CurrentDomain.AssemblyResolve -= OnAssemblyResolve;
             Instance = null;
             _logger.Info("autocad-mcp terminated.");
@@ -144,11 +148,7 @@ public sealed class AutoCadMcpApp : IExtensionApplication
     {
         try
         {
-            var currentVersion = typeof(AutoCadMcpApp).Assembly.GetName().Version?.ToString() ?? "0.0.0";
-            var update = new GitHubReleaseUpdateChecker("algomim", "mcps")
-                .CheckAsync(currentVersion, "autocad-mcp-")
-                .GetAwaiter()
-                .GetResult();
+            var update = CheckForUpdatesCore();
 
             if (!string.IsNullOrWhiteSpace(update.Message))
             {
@@ -163,21 +163,11 @@ public sealed class AutoCadMcpApp : IExtensionApplication
             }
 
             var installerText = update.InstallerName is null
-                ? "No host-specific MSI was found. The release page can be opened instead."
+                ? "No host-specific MSI was found. Opening the release page."
                 : $"Installer: {update.InstallerName}";
             AutoCadApplication.ShowAlertDialog(
                 $"autocad-mcp {update.LatestVersion} is available. You have {update.CurrentVersion}.\n\n" +
-                $"{installerText}\n\nThe installer will download now and run automatically after AutoCAD closes.");
-
-            var launch = UpdateInstallerLauncher.Launch(update, "AutoCAD");
-            if (launch.Started)
-            {
-                AutoCadApplication.ShowAlertDialog(launch.Message);
-                return;
-            }
-
-            AutoCadApplication.ShowAlertDialog(
-                $"{launch.Message}\n\nOpening the release page so you can run the MSI manually.");
+                $"{installerText}\n\nOpening the release page so you can download and install it manually.");
             OpenUrl(update.InstallerUrl ?? update.ReleaseUrl);
         }
         catch (System.Exception ex)
@@ -185,6 +175,45 @@ public sealed class AutoCadMcpApp : IExtensionApplication
             _logger.Warn($"Update check failed: {ex.Message}");
             AutoCadApplication.ShowAlertDialog($"Update check failed: {ex.Message}");
         }
+    }
+
+    private void StartStartupUpdateCheck()
+    {
+        if (System.Threading.Interlocked.Exchange(ref _startupUpdateCheckStarted, 1) == 1)
+            return;
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+                if (!ReferenceEquals(Instance, this))
+                    return;
+
+                var update = CheckForUpdatesCore();
+                if (!update.IsUpdateAvailable)
+                    return;
+
+                if (!ReferenceEquals(Instance, this))
+                    return;
+
+                _pendingStartupUpdate = update;
+                AutoCadApplication.Idle += OnStartupUpdateIdle;
+            }
+            catch (System.Exception ex)
+            {
+                _logger.Warn($"Startup update check failed: {ex.Message}");
+            }
+        });
+    }
+
+    private static ReleaseUpdateInfo CheckForUpdatesCore()
+    {
+        var currentVersion = typeof(AutoCadMcpApp).Assembly.GetName().Version?.ToString() ?? "0.0.0";
+        return new GitHubReleaseUpdateChecker("algomim", "mcps")
+            .CheckAsync(currentVersion, "autocad-mcp-")
+            .GetAwaiter()
+            .GetResult();
     }
 
     private static string? GetDocumentName()
@@ -250,6 +279,20 @@ public sealed class AutoCadMcpApp : IExtensionApplication
         _isRibbonBuildDeferred = false;
         if (IsConnected && Port is { } port)
             _ribbon.SetConnected(port);
+    }
+
+    private void OnStartupUpdateIdle(object? sender, EventArgs e)
+    {
+        AutoCadApplication.Idle -= OnStartupUpdateIdle;
+
+        var update = _pendingStartupUpdate;
+        _pendingStartupUpdate = null;
+        if (update is null)
+            return;
+
+        AutoCadApplication.ShowAlertDialog(
+            $"autocad-mcp {update.LatestVersion} is available. You have {update.CurrentVersion}.\n\n" +
+            "Use the Update button to open the release page when you are ready to install it.");
     }
 
     private static Assembly? OnAssemblyResolve(object? sender, ResolveEventArgs args)
