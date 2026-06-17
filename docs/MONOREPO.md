@@ -20,12 +20,16 @@ src/
       Algomim.AutoCad.Mcp.2026/
       Algomim.AutoCad.Mcp.2027/
     rhino/
+      Algomim.Rhino.Mcp.Shared/
+      Algomim.Rhino.Mcp.8/
       README.md
 tests/
   revit/
     Algomim.Revit.Mcp.Tests/
   autocad/
     Algomim.AutoCad.Mcp.Tests/
+  rhino/
+    Algomim.Rhino.Mcp.Tests/
 ```
 
 Future host adapters should follow the same boundary:

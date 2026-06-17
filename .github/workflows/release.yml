@@ -52,9 +52,7 @@ jobs:
 
       - name: Test host-neutral suites
         shell: pwsh
-        run: |
-          dotnet test tests/revit/Algomim.Revit.Mcp.Tests/Algomim.Revit.Mcp.Tests.csproj -c Release
-          dotnet test tests/autocad/Algomim.AutoCad.Mcp.Tests/Algomim.AutoCad.Mcp.Tests.csproj -c Release
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/test-host-neutral.ps1 -Configuration Release
 
       - name: Install or update WiX
         shell: pwsh
@@ -68,7 +66,7 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
-          wix build -acceptEula wix7 -arch x64 installer/revit-mcp.wxs -o dist/revit-mcp-${{ steps.release_version.outputs.version }}.msi
+          wix build -arch x64 installer/revit-mcp.wxs -o dist/revit-mcp-${{ steps.release_version.outputs.version }}.msi
 
       - name: Generate checksums
         shell: pwsh
@@ -91,7 +89,7 @@ jobs:
             This draft was created by the cloud-safe release workflow.
 
             Before publishing:
-            - Build `autocad-mcp-${{ steps.release_version.outputs.version }}.msi` on an approved Autodesk workstation.
-            - Upload `autocad-mcp-${{ steps.release_version.outputs.version }}.msi` and its `.sha256` file to this draft.
-            - Smoke test the Revit and AutoCAD installers.
+            - Build and upload every remaining release-supported host MSI on its approved build environment.
+            - Include a `.sha256` file for each uploaded host MSI.
+            - Smoke test every release-supported host installer.
             - Run the `publish-release` workflow with the required confirmation.

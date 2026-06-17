@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  WiX v4/v5 MSI for local rhino-mcp skeleton testing. Installs the bundled Yak package and asks
+  Rhino 8's Yak.exe to install it into Rhino Package Manager.
+  This is not a public release asset until Rhino installer smoke testing is complete.
+
+  Build (requires the WiX dotnet tool and a prior Yak package build):
+    powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/build-rhino-msi.ps1
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="rhino-mcp" Manufacturer="Algomim" Version="0.1.23.0" UpgradeCode="C1B2C3D4-1111-2222-3333-444455556666" Scope="perMachine">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of rhino-mcp is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+    <Launch Condition="Installed OR RHINO8DEFAULTPATH" Message="rhino-mcp requires Rhino 8 for this local skeleton installer." />
+
+    <Property Id="RHINO8DEFAULTPATH">
+      <DirectorySearch Id="DetectRhino8DefaultDirectory" Path="[ProgramFiles64Folder]Rhino 8\System">
+        <FileSearch Id="DetectRhino8DefaultExe" Name="Rhino.exe" />
+      </DirectorySearch>
+    </Property>
+    <Property Id="YAKEXE">
+      <DirectorySearch Id="DetectRhino8YakDirectory" Path="[ProgramFiles64Folder]Rhino 8\System">
+        <FileSearch Id="DetectRhino8YakExe" Name="Yak.exe" />
+      </DirectorySearch>
+    </Property>
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="AlgomimFolder" Name="Algomim">
+        <Directory Id="RhinoMcpFolder" Name="rhino-mcp">
+          <Directory Id="RhinoYakPackageFolder" Name="package" />
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <Feature Id="Main" Title="rhino-mcp">
+      <ComponentRef Id="RhinoYakPackageComponent" />
+    </Feature>
+
+    <Component Id="RhinoYakPackageComponent" Directory="RhinoYakPackageFolder">
+      <File Id="RhinoYakPackageFile" Source="$(var.RhinoYakPackage)" Name="algomim-rhino-mcp.yak" />
+    </Component>
+
+    <SetProperty Id="InstallRhinoYakPackage" Value="&quot;[YAKEXE]&quot; install &quot;[#RhinoYakPackageFile]&quot;" Before="InstallRhinoYakPackage" Sequence="execute" Condition="NOT REMOVE" />
+
+    <CustomAction Id="InstallRhinoYakPackage" BinaryRef="Wix4UtilCA_X64" DllEntry="WixQuietExec64" Execute="deferred" Impersonate="yes" Return="check" />
+
+    <InstallExecuteSequence>
+      <Custom Action="InstallRhinoYakPackage" After="InstallFiles" Condition="NOT REMOVE" />
+    </InstallExecuteSequence>
+
+  </Package>
+</Wix>

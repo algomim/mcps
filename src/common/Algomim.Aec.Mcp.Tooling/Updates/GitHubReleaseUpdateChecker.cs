@@ -60,27 +60,51 @@ public sealed class GitHubReleaseUpdateChecker
             var release = await JsonSerializer.DeserializeAsync<GitHubRelease>(stream, Options, cancellationToken).ConfigureAwait(false)
                 ?? throw new InvalidOperationException("GitHub release response was empty.");
 
-            var latest = NormalizeVersion(release.TagName);
-            var releaseUrl = string.IsNullOrWhiteSpace(release.HtmlUrl)
-                ? _latestReleaseUrl.ToString()
-                : release.HtmlUrl;
-
-            if (!IsNewer(latest, current))
-                return ReleaseUpdateInfo.UpToDate(current, latest, releaseUrl);
-
-            var installer = release.Assets
-                .Where(asset => asset.Name.StartsWith(installerAssetPrefix, StringComparison.OrdinalIgnoreCase))
-                .Where(asset => asset.Name.EndsWith(".msi", StringComparison.OrdinalIgnoreCase))
-                .OrderBy(asset => asset.Name, StringComparer.OrdinalIgnoreCase)
-                .FirstOrDefault();
-
-            return ReleaseUpdateInfo.UpdateAvailable(
-                current,
-                latest,
-                releaseUrl,
-                installer?.BrowserDownloadUrl,
-                installer?.Name);
+            return EvaluateRelease(release, current, installerAssetPrefix, _latestReleaseUrl.ToString());
         }
+    }
+
+    internal static ReleaseUpdateInfo EvaluateReleaseJson(
+        string releaseJson,
+        string currentVersion,
+        string installerAssetPrefix,
+        string fallbackReleaseUrl)
+    {
+        var release = JsonSerializer.Deserialize<GitHubRelease>(releaseJson, Options)
+            ?? throw new InvalidOperationException("GitHub release response was empty.");
+
+        return EvaluateRelease(release, NormalizeVersion(currentVersion), installerAssetPrefix, fallbackReleaseUrl);
+    }
+
+    private static ReleaseUpdateInfo EvaluateRelease(
+        GitHubRelease release,
+        string current,
+        string installerAssetPrefix,
+        string fallbackReleaseUrl)
+    {
+        var latest = NormalizeVersion(release.TagName);
+        var releaseUrl = string.IsNullOrWhiteSpace(release.HtmlUrl)
+            ? fallbackReleaseUrl
+            : release.HtmlUrl;
+
+        if (!IsNewer(latest, current))
+            return ReleaseUpdateInfo.UpToDate(current, latest, releaseUrl);
+
+        var installer = release.Assets
+            .Where(asset => asset.Name.StartsWith(installerAssetPrefix, StringComparison.OrdinalIgnoreCase))
+            .Where(asset => asset.Name.EndsWith(".msi", StringComparison.OrdinalIgnoreCase))
+            .OrderBy(asset => asset.Name, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
+
+        if (installer is null)
+            return ReleaseUpdateInfo.NoHostInstallerFound(current, latest, releaseUrl, installerAssetPrefix);
+
+        return ReleaseUpdateInfo.UpdateAvailable(
+            current,
+            latest,
+            releaseUrl,
+            installer.BrowserDownloadUrl,
+            installer.Name);
     }
 
     public static string NormalizeVersion(string value)

@@ -13,10 +13,16 @@
     <Project Path="src/hosts/autocad/Algomim.AutoCad.Mcp.2025/Algomim.AutoCad.Mcp.2025.csproj" />
     <Project Path="src/hosts/autocad/Algomim.AutoCad.Mcp.2026/Algomim.AutoCad.Mcp.2026.csproj" />
   </Folder>
+  <Folder Name="/src/hosts/rhino/">
+    <Project Path="src/hosts/rhino/Algomim.Rhino.Mcp.8/Algomim.Rhino.Mcp.8.csproj" />
+  </Folder>
   <Folder Name="/tests/revit/">
     <Project Path="tests/revit/Algomim.Revit.Mcp.Tests/Algomim.Revit.Mcp.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/autocad/">
     <Project Path="tests/autocad/Algomim.AutoCad.Mcp.Tests/Algomim.AutoCad.Mcp.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/rhino/">
+    <Project Path="tests/rhino/Algomim.Rhino.Mcp.Tests/Algomim.Rhino.Mcp.Tests.csproj" />
   </Folder>
 </Solution>

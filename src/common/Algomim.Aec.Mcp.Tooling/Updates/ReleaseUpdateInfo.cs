@@ -22,6 +22,16 @@ public sealed record ReleaseUpdateInfo(
             null,
             "No published GitHub release was found yet. This can happen before the first release is published or when the repository is private.");
 
+    public static ReleaseUpdateInfo NoHostInstallerFound(string currentVersion, string latestVersion, string releaseUrl, string installerAssetPrefix)
+        => new(
+            currentVersion,
+            latestVersion,
+            false,
+            releaseUrl,
+            null,
+            null,
+            $"Latest GitHub release is {latestVersion}, but no MSI asset matching '{installerAssetPrefix}*.msi' was found for this host.");
+
     public static ReleaseUpdateInfo UpdateAvailable(
         string currentVersion,
         string latestVersion,

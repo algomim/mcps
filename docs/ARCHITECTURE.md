@@ -2,8 +2,8 @@
 
 ## What it is
 
-An AEC MCP monorepo. Autodesk Revit and AutoCAD are the first host adapters; Rhino is planned as a
-separate host adapter. The Revit adapter is hosted **inside Revit** and exposes:
+An AEC MCP monorepo. Autodesk Revit and AutoCAD are the first release-supported host adapters;
+Rhino has an initial separate host skeleton. The Revit adapter is hosted **inside Revit** and exposes:
 
 - typed Revit tools for common read, write, create, graphics, and export operations;
 - `script_execute` for advanced C# execution against the live Revit API;
@@ -12,6 +12,8 @@ separate host adapter. The Revit adapter is hosted **inside Revit** and exposes:
 Legacy aliases `execute-script` and `discover-api` remain available for backward compatibility.
 The AutoCAD adapter is hosted **inside AutoCAD** and exposes a C#/.NET API-first typed tool catalog.
 Python, LISP, SCR files, and raw script execution are deliberately outside the AutoCAD foundation.
+The Rhino adapter skeleton is hosted **inside Rhino** and wires lifecycle commands plus an empty MCP
+catalog before typed RhinoCommon tools are added.
 
 ## Runtime topology
 
@@ -122,7 +124,10 @@ aec-skills/revit-mcp/
 |       |   `-- Algomim.Revit.Mcp.2027/
 |       |-- autocad/
 |       `-- rhino/
+|           |-- Algomim.Rhino.Mcp.Shared/
+|           `-- Algomim.Rhino.Mcp.8/
 |-- tests/revit/Algomim.Revit.Mcp.Tests/
+|-- tests/rhino/Algomim.Rhino.Mcp.Tests/
 |-- installer/
 |-- docs/
 `-- revit-mcp.slnx
@@ -182,10 +187,10 @@ the adapters aligned without forcing a full DI container into Autodesk add-ins.
 
 - Revit 2025 / 2026: `net8.0-windows`.
 - Revit 2027: `net10.0-windows`.
-- Host-specific MSI via WiX. Revit, AutoCAD, and Rhino installers are separate packages;
-  future bundles may compose them.
+- Host-specific MSI via WiX. Revit and AutoCAD are current release-supported packages; Rhino has a
+  reserved MSI boundary and host skeleton.
 - CI builds against Nice3point Revit API reference packages, so Revit does not need to be installed to build.
-- Real Revit smoke test is still required before release.
+- Release-supported host smoke tests are still required before public release.
 
 ## Roadmap
 

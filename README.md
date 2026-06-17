@@ -1,7 +1,8 @@
 # Algomim AEC MCP
 
 An AEC-focused [Model Context Protocol](https://modelcontextprotocol.io) monorepo. Autodesk Revit
-and AutoCAD are the first host adapters; Rhino is planned as a separate host package and installer.
+and AutoCAD are the first release-supported host adapters; Rhino has an initial host skeleton for a
+separate host package and installer.
 The project is licensed under Apache-2.0 and developed in public through issue-first pull requests.
 
 `revit-mcp` exposes Revit to AI agents through a typed tool catalog plus two low-level primitives:
@@ -20,7 +21,8 @@ Common contracts live in `src/common/Algomim.Aec.Mcp.*`; host adapters live unde
 `src/hosts/<host>/`. The public Revit tool list is assembled through module registration in
 `src/hosts/revit/Algomim.Revit.Mcp.Shared/Tools/Composition/RevitToolModuleRegistry.cs`.
 AutoCAD follows the same host-adapter shape with C#/.NET API-first tools and no Python/LISP/SCR
-foundation.
+foundation. Rhino currently wires the host lifecycle and empty MCP catalog before typed tools are
+added.
 
 Current visible Revit MCP names use one canonical `domain_action_object` style, plus 2
 backward-compatible low-level aliases.
@@ -117,6 +119,6 @@ naming; host-specific installers.
 
 ## Status
 
-Early development. The typed Revit foundation, AutoCAD host foundation, host-specific MSI packaging,
-and target capability map are implemented; broader real-project smoke testing is still required
-before release.
+Early development. The typed Revit foundation, AutoCAD host foundation, Rhino host skeleton,
+host-specific MSI packaging, and target capability map are implemented; broader real-project smoke
+testing is still required before release.

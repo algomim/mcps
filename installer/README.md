@@ -6,6 +6,7 @@ host MSIs instead of merging host-specific install logic into one file.
 ```text
 installer/
   revit-mcp.wxs              # current Revit MSI
+  rhino-mcp.wxs              # local Rhino skeleton MSI
   hosts/
     revit/README.md
     autocad/README.md

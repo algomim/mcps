@@ -165,6 +165,7 @@ Assert-Or-Update-Element "Directory.Build.props" "/Project/PropertyGroup/Version
 
 Assert-Or-Update-Attribute "installer/revit-mcp.wxs" "/w:Wix/w:Package" "Version" $msiVersion
 Assert-Or-Update-Attribute "installer/autocad-mcp.wxs" "/w:Wix/w:Package" "Version" $msiVersion
+Assert-Or-Update-Attribute "installer/rhino-mcp.wxs" "/w:Wix/w:Package" "Version" $msiVersion
 
 $autoCadManifestPaths = @(
     "installer/hosts/autocad/PackageContents.xml",

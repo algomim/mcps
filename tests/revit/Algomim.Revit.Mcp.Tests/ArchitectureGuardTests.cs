@@ -122,23 +122,44 @@ public class ArchitectureGuardTests
     public void Host_ribbons_expose_standard_connection_status_and_update_actions()
     {
         var root = FindRepositoryRoot();
+        var contract = File.ReadAllText(Path.Combine(root, "docs", "HOST_CONTRACT.md"));
         var revitRibbon = File.ReadAllText(Path.Combine(root, "src", "hosts", "revit", "Algomim.Revit.Mcp.Shared", "UI", "RibbonController.cs"));
         var revitStatus = File.ReadAllText(Path.Combine(root, "src", "hosts", "revit", "Algomim.Revit.Mcp.Shared", "UI", "ShowStatusCommand.cs"));
         var revitApp = File.ReadAllText(Path.Combine(root, "src", "hosts", "revit", "Algomim.Revit.Mcp.Shared", "App", "RevitMcpApp.cs"));
         var autoCadRibbon = File.ReadAllText(Path.Combine(root, "src", "hosts", "autocad", "Algomim.AutoCad.Mcp.Shared", "UI", "RibbonController.cs"));
         var autoCadApp = File.ReadAllText(Path.Combine(root, "src", "hosts", "autocad", "Algomim.AutoCad.Mcp.Shared", "App", "AutoCadMcpApp.cs"));
+        var autoCadCommands = File.ReadAllText(Path.Combine(root, "src", "hosts", "autocad", "Algomim.AutoCad.Mcp.Shared", "App", "AutoCadMcpCommands.cs"));
+
+        Assert.Contains("Connect/Disconnect", contract);
+        Assert.Contains("MCP URL: http://127.0.0.1:<port>/mcp", contract);
+        Assert.Contains("Health: http://127.0.0.1:<port>/health", contract);
+        Assert.Contains("<host>-mcp-X.Y.Z.msi", contract);
+        Assert.Contains("tools/list", contract);
+        Assert.Contains("tools/call", contract);
 
         Assert.Contains("revitMcpToggle", revitRibbon);
         Assert.Contains("revitMcpStatus", revitRibbon);
         Assert.Contains("revitMcpUpdate", revitRibbon);
         Assert.Contains("ShowStatusCommand", revitStatus);
         Assert.Contains("MCP URL: http://127.0.0.1:{port}/mcp", revitApp);
+        Assert.Contains("Health: http://127.0.0.1:{port}/health", revitApp);
+        Assert.Contains("_announcements?.Write", revitApp);
+        Assert.Contains("_announcements?.Remove(Environment.ProcessId)", revitApp);
+        Assert.Contains(".CheckAsync(currentVersion, \"revit-mcp-\")", revitApp);
 
         Assert.Contains("ButtonId", autoCadRibbon);
         Assert.Contains("StatusButtonId", autoCadRibbon);
         Assert.Contains("UpdateButtonId", autoCadRibbon);
         Assert.Contains("ShowStatus()", autoCadApp);
         Assert.Contains("MCP URL: http://127.0.0.1:{port}/mcp", autoCadApp);
+        Assert.Contains("Health: http://127.0.0.1:{port}/health", autoCadApp);
+        Assert.Contains("_announcements?.Write", autoCadApp);
+        Assert.Contains("_announcements?.Remove(AutoCadMcpServerProfile.Owner, Environment.ProcessId)", autoCadApp);
+        Assert.Contains(".CheckAsync(currentVersion, \"autocad-mcp-\")", autoCadApp);
+        Assert.Contains("ALGOMIM_MCP_CONNECT", autoCadCommands);
+        Assert.Contains("ALGOMIM_MCP_DISCONNECT", autoCadCommands);
+        Assert.Contains("ALGOMIM_MCP_STATUS", autoCadCommands);
+        Assert.Contains("ALGOMIM_MCP_CHECK_UPDATE", autoCadCommands);
     }
 
     [Fact]

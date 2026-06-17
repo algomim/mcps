@@ -1,11 +1,13 @@
 # Packaging
 
-Each host ships as its own MSI:
+Each release-supported Autodesk host ships as its own MSI. Rhino uses Yak for the package-manager
+path and also has a local skeleton MSI while installer behavior is still being tested:
 
 ```text
 revit-mcp.msi
 autocad-mcp.msi
-rhino-mcp.msi
+algomim-rhino-mcp-X.Y.Z-rh8_0-win.yak
+rhino-mcp.msi   # local skeleton only
 ```
 
 Host MSIs must remain independently installable. Future bundle installers should compose host MSIs
@@ -18,7 +20,8 @@ One MSI per host, not one MSI per product year.
 
 revit-mcp.msi   -> Revit 2025, 2026, 2027 payloads/manifests
 autocad-mcp.msi -> AutoCAD 2025, 2026 payloads/manifests
-rhino-mcp.msi   -> Rhino payloads when added
+algomim-rhino-mcp-*.yak -> Rhino Package Manager / marketplace path
+rhino-mcp.msi           -> local wrapper that installs the bundled Yak package
 ```
 
 Year-specific binaries stay inside the host MSI. This keeps installation simple for users while
@@ -32,7 +35,7 @@ Installer edge-case behavior:
 - AutoCAD still uses Autodesk AppLoader `RuntimeRequirements`; the MSI also skips payload folders
   for unsupported/missing AutoCAD years.
 
-GitHub releases should publish host MSI assets:
+GitHub releases should publish current release-supported host MSI assets:
 
 ```text
 revit-mcp-X.Y.Z.msi
@@ -63,12 +66,13 @@ Installed host add-ins check GitHub Releases for newer host-specific MSI assets:
 ```text
 revit-mcp-X.Y.Z.msi
 autocad-mcp-X.Y.Z.msi
+algomim-rhino-mcp-X.Y.Z-*.yak   # after Rhino becomes release-supported
 ```
 
-Revit and AutoCAD share the common release-checking code. On startup, each host checks the latest
-GitHub Release in the background and notifies the user only when a newer host-specific MSI is
-available. The Update button keeps a manual path: it checks again and can open the release/download
-page, but it does not download or install MSI assets automatically.
+Revit, AutoCAD, and the Rhino skeleton share the common release-checking code. On startup, each host
+checks the latest GitHub Release in the background and notifies the user only when a newer
+host-specific release artifact is available. The Update button keeps a manual path: it checks again
+and can open the release/download page, but it does not download or install artifacts automatically.
 
 Release tags run on GitHub-hosted Windows and create a draft release after cloud-safe checks pass.
 The workflow builds the Revit MSI because Revit uses NuGet reference assemblies. AutoCAD plugin
