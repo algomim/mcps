@@ -57,9 +57,9 @@ jobs:
       - name: Install or update WiX
         shell: pwsh
         run: |
-          dotnet tool install --global wix
+          dotnet tool install --global wix --version 5.0.2
           if ($LASTEXITCODE -ne 0) {
-            dotnet tool update --global wix
+            dotnet tool update --global wix --version 5.0.2
           }
           wix extension add WixToolset.UI.wixext --global
 

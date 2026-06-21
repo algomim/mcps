@@ -7,7 +7,7 @@
     powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/build-rhino-msi.ps1
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
-  <Package Name="rhino-mcp" Manufacturer="Algomim" Version="0.1.24.0" UpgradeCode="C1B2C3D4-1111-2222-3333-444455556666" Scope="perMachine">
+  <Package Name="rhino-mcp" Manufacturer="Algomim" Version="0.1.25.0" UpgradeCode="C1B2C3D4-1111-2222-3333-444455556666" Scope="perMachine">
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of rhino-mcp is already installed." />
     <MediaTemplate EmbedCab="yes" />
