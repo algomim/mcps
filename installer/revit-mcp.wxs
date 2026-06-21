@@ -9,16 +9,19 @@
   The <Files> harvesting pulls from each version project's Release output, so build first.
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
-  <Package Name="revit-mcp" Manufacturer="Algomim" Version="0.1.23.0" UpgradeCode="A1B2C3D4-1111-2222-3333-444455556666" Scope="perMachine">
+  <Package Name="revit-mcp" Manufacturer="Algomim" Version="0.1.24.0" UpgradeCode="A1B2C3D4-1111-2222-3333-444455556666" Scope="perMachine">
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of revit-mcp is already installed." />
     <MediaTemplate EmbedCab="yes" />
     <ui:WixUI Id="WixUI_Minimal" />
     <WixVariable Id="WixUILicenseRtf" Value="$(sys.SOURCEFILEDIR)legal\EULA.rtf" />
-    <Launch Condition="Installed OR REVIT2025INSTALLED OR REVIT2026INSTALLED OR REVIT2027INSTALLED OR REVIT2025DEFAULTPATH OR REVIT2026DEFAULTPATH OR REVIT2027DEFAULTPATH" Message="revit-mcp requires Revit 2025, Revit 2026, or Revit 2027." />
+    <Launch Condition="Installed OR REVIT2025INSTALLED OR REVIT2026INSTALLED OR REVIT2027INSTALLED OR REVIT2025INSTALLROOT OR REVIT2026INSTALLROOT OR REVIT2027INSTALLROOT OR REVIT2025DEFAULTPATH OR REVIT2026DEFAULTPATH OR REVIT2027DEFAULTPATH" Message="revit-mcp requires Revit 2025, Revit 2026, or Revit 2027." />
 
     <Property Id="REVIT2025INSTALLED">
       <RegistrySearch Id="DetectRevit2025" Root="HKLM" Key="SOFTWARE\Autodesk\Revit\2025\REVIT-05:0409" Name="InstallationLocation" Bitness="always64" Type="raw" />
+    </Property>
+    <Property Id="REVIT2025INSTALLROOT">
+      <RegistrySearch Id="DetectRevit2025InstallRoot" Root="HKLM" Key="SOFTWARE\Autodesk\Revit\2025\REVIT-05" Name="InstallRoot" Bitness="always64" Type="raw" />
     </Property>
     <Property Id="REVIT2025DEFAULTPATH">
       <DirectorySearch Id="DetectRevit2025DefaultDirectory" Path="[ProgramFiles64Folder]Autodesk\Revit 2025">
@@ -28,6 +31,9 @@
     <Property Id="REVIT2026INSTALLED">
       <RegistrySearch Id="DetectRevit2026" Root="HKLM" Key="SOFTWARE\Autodesk\Revit\2026\REVIT-05:0409" Name="InstallationLocation" Bitness="always64" Type="raw" />
     </Property>
+    <Property Id="REVIT2026INSTALLROOT">
+      <RegistrySearch Id="DetectRevit2026InstallRoot" Root="HKLM" Key="SOFTWARE\Autodesk\Revit\2026\REVIT-05" Name="InstallRoot" Bitness="always64" Type="raw" />
+    </Property>
     <Property Id="REVIT2026DEFAULTPATH">
       <DirectorySearch Id="DetectRevit2026DefaultDirectory" Path="[ProgramFiles64Folder]Autodesk\Revit 2026">
         <FileSearch Id="DetectRevit2026DefaultExe" Name="Revit.exe" />
@@ -35,6 +41,9 @@
     </Property>
     <Property Id="REVIT2027INSTALLED">
       <RegistrySearch Id="DetectRevit2027" Root="HKLM" Key="SOFTWARE\Autodesk\Revit\2027\REVIT-05:0409" Name="InstallationLocation" Bitness="always64" Type="raw" />
+    </Property>
+    <Property Id="REVIT2027INSTALLROOT">
+      <RegistrySearch Id="DetectRevit2027InstallRoot" Root="HKLM" Key="SOFTWARE\Autodesk\Revit\2027\REVIT-05" Name="InstallRoot" Bitness="always64" Type="raw" />
     </Property>
     <Property Id="REVIT2027DEFAULTPATH">
       <DirectorySearch Id="DetectRevit2027DefaultDirectory" Path="[ProgramFiles64Folder]Autodesk\Revit 2027">
@@ -56,17 +65,17 @@
 
     <Feature Id="Main" Title="revit-mcp">
       <Feature Id="Revit2025" Title="Revit 2025 add-in" Level="1">
-        <Level Value="0" Condition="NOT REVIT2025INSTALLED AND NOT REVIT2025DEFAULTPATH" />
+        <Level Value="0" Condition="NOT REVIT2025INSTALLED AND NOT REVIT2025INSTALLROOT AND NOT REVIT2025DEFAULTPATH" />
         <ComponentGroupRef Id="Files2025" />
         <ComponentRef Id="Addin2025" />
       </Feature>
       <Feature Id="Revit2026" Title="Revit 2026 add-in" Level="1">
-        <Level Value="0" Condition="NOT REVIT2026INSTALLED AND NOT REVIT2026DEFAULTPATH" />
+        <Level Value="0" Condition="NOT REVIT2026INSTALLED AND NOT REVIT2026INSTALLROOT AND NOT REVIT2026DEFAULTPATH" />
         <ComponentGroupRef Id="Files2026" />
         <ComponentRef Id="Addin2026" />
       </Feature>
       <Feature Id="Revit2027" Title="Revit 2027 add-in" Level="1">
-        <Level Value="0" Condition="NOT REVIT2027INSTALLED AND NOT REVIT2027DEFAULTPATH" />
+        <Level Value="0" Condition="NOT REVIT2027INSTALLED AND NOT REVIT2027INSTALLROOT AND NOT REVIT2027DEFAULTPATH" />
         <ComponentGroupRef Id="Files2027" />
         <ComponentRef Id="Addin2027" />
       </Feature>
@@ -77,7 +86,10 @@
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Abstractions.*" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Core.*" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Tooling.*" />
-      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Algomim.Revit.Mcp.2025.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Algomim.Revit.Mcp.2025.dll" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Algomim.Revit.Mcp.2025.deps.json" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Algomim.Revit.Mcp.2025.runtimeconfig.json" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Algomim.Revit.Mcp.2025.pdb" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\Microsoft.CodeAnalysis*.dll" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2025\bin\Release\net8.0-windows\**\Microsoft.CodeAnalysis*.resources.dll" />
     </ComponentGroup>
@@ -90,7 +102,10 @@
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Abstractions.*" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Core.*" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Tooling.*" />
-      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Algomim.Revit.Mcp.2026.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Algomim.Revit.Mcp.2026.dll" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Algomim.Revit.Mcp.2026.deps.json" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Algomim.Revit.Mcp.2026.runtimeconfig.json" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Algomim.Revit.Mcp.2026.pdb" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\Microsoft.CodeAnalysis*.dll" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2026\bin\Release\net8.0-windows\**\Microsoft.CodeAnalysis*.resources.dll" />
     </ComponentGroup>
@@ -103,7 +118,10 @@
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Algomim.Aec.Mcp.Abstractions.*" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Algomim.Aec.Mcp.Core.*" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Algomim.Aec.Mcp.Tooling.*" />
-      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Algomim.Revit.Mcp.2027.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Algomim.Revit.Mcp.2027.dll" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Algomim.Revit.Mcp.2027.deps.json" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Algomim.Revit.Mcp.2027.runtimeconfig.json" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Algomim.Revit.Mcp.2027.pdb" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\Microsoft.CodeAnalysis*.dll" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\revit\Algomim.Revit.Mcp.2027\bin\Release\net10.0-windows\**\Microsoft.CodeAnalysis*.resources.dll" />
     </ComponentGroup>

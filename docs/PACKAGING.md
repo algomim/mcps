@@ -22,7 +22,7 @@ Packaging unit:
 One MSI per host, not one MSI per product year.
 
 revit-mcp.msi   -> Revit 2025, 2026, 2027 payloads/manifests
-autocad-mcp.msi -> AutoCAD 2025, 2026 payloads/manifests
+autocad-mcp.msi -> AutoCAD 2025, 2026, 2027 payloads/manifests
 algomim-rhino-mcp-*.yak -> Rhino Package Manager / marketplace path
 rhino-mcp.msi           -> wrapper that installs the bundled Yak package
 ```
@@ -100,7 +100,7 @@ Current AutoCAD targets:
 ```text
 AutoCAD 2025 -> net8.0-windows
 AutoCAD 2026 -> net8.0-windows
-AutoCAD 2027 -> net10.0-windows (prepared, requires installed AutoCAD 2027 SDK)
+AutoCAD 2027 -> net10.0-windows
 ```
 
 Installer layout:

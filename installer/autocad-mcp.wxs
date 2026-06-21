@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   WiX v4/v5 MSI for autocad-mcp. Installs a single Autodesk ApplicationPlugins bundle with
-  version-specific AutoCAD plugin binaries under Contents/2025 and Contents/2026.
+  version-specific AutoCAD plugin binaries under Contents/2025, Contents/2026, and Contents/2027.
 
   Build (requires the WiX dotnet tool and a prior Release build):
     wix build -ext WixToolset.UI.wixext installer/autocad-mcp.wxs -o dist/autocad-mcp.msi
 
-  AutoCAD 2027 is intentionally not harvested until the local AutoCAD 2027 SDK/output exists.
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
-  <Package Name="autocad-mcp" Manufacturer="Algomim" Version="0.1.23.0" UpgradeCode="B1B2C3D4-1111-2222-3333-444455556666" Scope="perMachine">
+  <Package Name="autocad-mcp" Manufacturer="Algomim" Version="0.1.24.0" UpgradeCode="B1B2C3D4-1111-2222-3333-444455556666" Scope="perMachine">
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of autocad-mcp is already installed." />
     <MediaTemplate EmbedCab="yes" />
     <ui:WixUI Id="WixUI_Minimal" />
     <WixVariable Id="WixUILicenseRtf" Value="$(sys.SOURCEFILEDIR)legal\EULA.rtf" />
-    <Launch Condition="Installed OR AUTOCAD2025INSTALLED OR AUTOCAD2026INSTALLED OR AUTOCAD2025DEFAULTPATH OR AUTOCAD2026DEFAULTPATH" Message="autocad-mcp requires AutoCAD 2025 or AutoCAD 2026." />
+    <Launch Condition="Installed OR AUTOCAD2025INSTALLED OR AUTOCAD2026INSTALLED OR AUTOCAD2027INSTALLED OR AUTOCAD2025DEFAULTPATH OR AUTOCAD2026DEFAULTPATH OR AUTOCAD2027DEFAULTPATH" Message="autocad-mcp requires AutoCAD 2025, AutoCAD 2026, or AutoCAD 2027." />
 
     <Property Id="AUTOCAD2025INSTALLED">
       <RegistrySearch Id="DetectAutoCad2025" Root="HKLM" Key="SOFTWARE\Autodesk\AutoCAD\R25.0\ACAD-8101:409" Name="Location" Bitness="always64" Type="raw" />
@@ -33,6 +32,14 @@
         <FileSearch Id="DetectAutoCad2026DefaultExe" Name="acad.exe" />
       </DirectorySearch>
     </Property>
+    <Property Id="AUTOCAD2027INSTALLED">
+      <RegistrySearch Id="DetectAutoCad2027" Root="HKLM" Key="SOFTWARE\Autodesk\AutoCAD\R26.0\ACAD-A101:409" Name="Location" Bitness="always64" Type="raw" />
+    </Property>
+    <Property Id="AUTOCAD2027DEFAULTPATH">
+      <DirectorySearch Id="DetectAutoCad2027DefaultDirectory" Path="[ProgramFiles64Folder]Autodesk\AutoCAD 2027">
+        <FileSearch Id="DetectAutoCad2027DefaultExe" Name="acad.exe" />
+      </DirectorySearch>
+    </Property>
 
     <StandardDirectory Id="CommonAppDataFolder">
       <Directory Id="AutodeskFolder" Name="Autodesk">
@@ -41,6 +48,7 @@
             <Directory Id="AutoCadContentsFolder" Name="Contents">
               <Directory Id="AutoCad2025Folder" Name="2025" />
               <Directory Id="AutoCad2026Folder" Name="2026" />
+              <Directory Id="AutoCad2027Folder" Name="2027" />
             </Directory>
           </Directory>
         </Directory>
@@ -56,6 +64,10 @@
       <Feature Id="AutoCad2026" Title="AutoCAD 2026 add-in" Level="1">
         <Level Value="0" Condition="NOT AUTOCAD2026INSTALLED AND NOT AUTOCAD2026DEFAULTPATH" />
         <ComponentGroupRef Id="AutoCadFiles2026" />
+      </Feature>
+      <Feature Id="AutoCad2027" Title="AutoCAD 2027 add-in" Level="1">
+        <Level Value="0" Condition="NOT AUTOCAD2027INSTALLED AND NOT AUTOCAD2027DEFAULTPATH" />
+        <ComponentGroupRef Id="AutoCadFiles2027" />
       </Feature>
     </Feature>
 
@@ -77,6 +89,14 @@
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2026\bin\Release\net8.0-windows\Algomim.Aec.Mcp.Tooling.*" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2026\bin\Release\net8.0-windows\Algomim.AutoCad.Mcp.2026.*" />
       <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2026\bin\Release\net8.0-windows\PackageContents.xml" />
+    </ComponentGroup>
+
+    <ComponentGroup Id="AutoCadFiles2027" Directory="AutoCad2027Folder">
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2027\bin\Release\net10.0-windows\Algomim.Aec.Mcp.Abstractions.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2027\bin\Release\net10.0-windows\Algomim.Aec.Mcp.Core.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2027\bin\Release\net10.0-windows\Algomim.Aec.Mcp.Tooling.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2027\bin\Release\net10.0-windows\Algomim.AutoCad.Mcp.2027.*" />
+      <Files Include="$(sys.SOURCEFILEDIR)..\src\hosts\autocad\Algomim.AutoCad.Mcp.2027\bin\Release\net10.0-windows\PackageContents.xml" />
     </ComponentGroup>
 
   </Package>

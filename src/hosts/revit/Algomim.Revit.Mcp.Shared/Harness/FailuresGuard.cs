@@ -1,20 +1,22 @@
 using Autodesk.Revit.DB;
-using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Events;
 
 namespace Algomim.Revit.Mcp.Harness;
 
 /// <summary>
-/// Keeps automation unattended: auto-resolves recoverable warnings inside transactions
-/// (<see cref="IFailuresPreprocessor"/>) and auto-dismisses modal dialogs that would otherwise
-/// block the headless UI thread (<see cref="DialogBoxShowing"/>).
+/// Keeps transaction failure handling unattended without interfering with Revit startup or
+/// document-open dialogs.
 /// </summary>
 public sealed class FailuresGuard : IFailuresPreprocessor
 {
-    /// <summary>Deletes warnings and resolves resolvable errors so the transaction can commit.</summary>
+    private readonly List<string> _errorMessages = [];
+
+    public IReadOnlyList<string> ErrorMessages => _errorMessages;
+
+    /// <summary>Deletes warnings. Errors roll the transaction back instead of showing modal UI.</summary>
     public FailureProcessingResult PreprocessFailures(FailuresAccessor accessor)
     {
-        var handled = false;
+        var deletedWarnings = false;
+        var sawError = false;
 
         foreach (var message in accessor.GetFailureMessages())
         {
@@ -22,32 +24,20 @@ public sealed class FailuresGuard : IFailuresPreprocessor
             if (severity == FailureSeverity.Warning)
             {
                 accessor.DeleteWarning(message);
-                handled = true;
+                deletedWarnings = true;
             }
-            else if (severity == FailureSeverity.Error && message.HasResolutions())
+            else if (severity == FailureSeverity.Error)
             {
-                accessor.ResolveFailure(message);
-                handled = true;
+                sawError = true;
+                var description = message.GetDescriptionText();
+                if (!string.IsNullOrWhiteSpace(description))
+                    _errorMessages.Add(description);
             }
         }
 
-        return handled ? FailureProcessingResult.ProceedWithCommit : FailureProcessingResult.Continue;
-    }
+        if (sawError)
+            return FailureProcessingResult.ProceedWithRollBack;
 
-    /// <summary>
-    /// Auto-dismisses modal dialogs/task dialogs during automation. Subscribe in OnStartup:
-    /// <c>uiCtrlApp.DialogBoxShowing += FailuresGuard.OnDialogBoxShowing;</c> and unsubscribe on shutdown.
-    /// </summary>
-    public static void OnDialogBoxShowing(object? sender, DialogBoxShowingEventArgs e)
-    {
-        // TaskDialog: confirm with the first command-link / OK so nothing hangs.
-        if (e is TaskDialogShowingEventArgs task)
-        {
-            task.OverrideResult((int)TaskDialogResult.Ok);
-            return;
-        }
-
-        // Other modal message boxes: answer OK (1).
-        e.OverrideResult(1);
+        return deletedWarnings ? FailureProcessingResult.ProceedWithCommit : FailureProcessingResult.Continue;
     }
 }

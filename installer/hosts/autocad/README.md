@@ -22,7 +22,7 @@ Algomim.AutoCad.Mcp.bundle/
       Algomim.AutoCad.Mcp.2027.dll
 ```
 
-The current MSI harvests 2025 and 2026 outputs. AutoCAD 2027 remains prepared in source but is
-not packaged until the local AutoCAD 2027 SDK/output is available.
+The MSI harvests 2025, 2026, and 2027 outputs. AutoCAD 2027 requires the approved local build
+environment to have AutoCAD 2027 SDK/runtime assemblies available before packaging.
 
 This installer owns only AutoCAD-specific manifests, registration, and binaries.

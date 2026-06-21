@@ -51,4 +51,34 @@ public sealed class AutoCadArchitectureTests
         var errors = ToolCatalogValidator.ValidateNames(AutoCadToolNames.InitialCatalog);
         Assert.Empty(errors);
     }
+
+    [Fact]
+    public void AutoCadInstallerPackagesEverySupportedVersion()
+    {
+        var root = FindRepositoryRoot();
+        var installer = File.ReadAllText(Path.Combine(root, "installer", "autocad-mcp.wxs"));
+        var manifest = File.ReadAllText(Path.Combine(root, "installer", "hosts", "autocad", "PackageContents.xml"));
+
+        Assert.Contains("AutoCAD 2025, AutoCAD 2026, or AutoCAD 2027", installer);
+        Assert.Contains("AUTOCAD2027INSTALLED", installer);
+        Assert.Contains("AUTOCAD2027DEFAULTPATH", installer);
+        Assert.Contains("AutoCadFiles2027", installer);
+        Assert.Contains(@"Algomim.AutoCad.Mcp.2027\bin\Release\net10.0-windows", installer);
+        Assert.Contains("SeriesMin=\"R26.0\"", manifest);
+        Assert.Contains("ModuleName=\"./Contents/2027/Algomim.AutoCad.Mcp.2027.dll\"", manifest);
+    }
+
+    private static string FindRepositoryRoot()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null)
+        {
+            if (File.Exists(Path.Combine(directory.FullName, "Algomim.Aec.Mcp.slnx")))
+                return directory.FullName;
+
+            directory = directory.Parent;
+        }
+
+        throw new InvalidOperationException("Repository root could not be found.");
+    }
 }

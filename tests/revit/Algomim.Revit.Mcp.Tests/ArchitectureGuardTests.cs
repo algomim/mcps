@@ -213,6 +213,48 @@ public class ArchitectureGuardTests
     }
 
     [Fact]
+    public void RevitInstallerUsesLocaleIndependentVersionDetection()
+    {
+        var root = FindRepositoryRoot();
+        var installer = File.ReadAllText(Path.Combine(root, "installer", "revit-mcp.wxs"));
+
+        Assert.Contains("REVIT2025INSTALLROOT", installer);
+        Assert.Contains("REVIT2026INSTALLROOT", installer);
+        Assert.Contains("REVIT2027INSTALLROOT", installer);
+        Assert.Contains(@"SOFTWARE\Autodesk\Revit\2027\REVIT-05", installer);
+        Assert.Contains("NOT REVIT2027INSTALLED AND NOT REVIT2027INSTALLROOT AND NOT REVIT2027DEFAULTPATH", installer);
+    }
+
+    [Fact]
+    public void RevitStartupDoesNotSuppressDocumentOpenDialogs()
+    {
+        var root = FindRepositoryRoot();
+        var app = File.ReadAllText(Path.Combine(root, "src", "hosts", "revit", "Algomim.Revit.Mcp.Shared", "App", "RevitMcpApp.cs"));
+        var guard = File.ReadAllText(Path.Combine(root, "src", "hosts", "revit", "Algomim.Revit.Mcp.Shared", "Harness", "FailuresGuard.cs"));
+
+        Assert.DoesNotContain("DialogBoxShowing +=", app);
+        Assert.DoesNotContain("DialogBoxShowing -=", app);
+        Assert.DoesNotContain("OverrideResult", guard);
+        Assert.DoesNotContain("TaskDialogShowingEventArgs", guard);
+    }
+
+    [Fact]
+    public void RevitInstallerDoesNotCopyAddinManifestsIntoPluginPayloadFolders()
+    {
+        var root = FindRepositoryRoot();
+        var installer = File.ReadAllText(Path.Combine(root, "installer", "revit-mcp.wxs"));
+
+        foreach (var version in new[] { "2025", "2026", "2027" })
+        {
+            Assert.DoesNotContain($"Algomim.Revit.Mcp.{version}.*", installer);
+            Assert.Contains($"Algomim.Revit.Mcp.{version}.dll", installer);
+            Assert.Contains($"Algomim.Revit.Mcp.{version}.deps.json", installer);
+            Assert.Contains($"Algomim.Revit.Mcp.{version}.runtimeconfig.json", installer);
+            Assert.Contains($@"Algomim.Revit.Mcp.{version}\Algomim.Revit.Mcp.{version}.addin", installer);
+        }
+    }
+
+    [Fact]
     public void Local_install_script_validates_monorepo_paths_and_cleans_stale_plugin_files()
     {
         var root = FindRepositoryRoot();

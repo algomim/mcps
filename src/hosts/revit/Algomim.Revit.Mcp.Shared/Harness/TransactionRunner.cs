@@ -17,8 +17,9 @@ public static class TransactionRunner
         {
             transaction.Start();
 
+            var guard = new FailuresGuard();
             var options = transaction.GetFailureHandlingOptions();
-            options.SetFailuresPreprocessor(new FailuresGuard());
+            options.SetFailuresPreprocessor(guard);
             options.SetClearAfterRollback(true);
             transaction.SetFailureHandlingOptions(options);
 
@@ -30,7 +31,15 @@ public static class TransactionRunner
                 return result;
             }
 
-            transaction.Commit();
+            var status = transaction.Commit();
+            if (status != TransactionStatus.Committed)
+            {
+                var details = guard.ErrorMessages.Count == 0
+                    ? status.ToString()
+                    : string.Join("; ", guard.ErrorMessages);
+                return McpToolResult.Error($"[TRANSACTION_ROLLED_BACK] {details}");
+            }
+
             return result;
         }
         catch (Exception ex)

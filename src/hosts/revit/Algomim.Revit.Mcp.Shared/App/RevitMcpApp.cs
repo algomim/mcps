@@ -58,7 +58,6 @@ public sealed class RevitMcpApp : IExternalApplication
             _host = new HttpListenerMcpHost(requestDispatcher, catalog, version, _logger);
 
             ReflectionApiDiscovery.WarmUp();
-            application.DialogBoxShowing += FailuresGuard.OnDialogBoxShowing;
 
             _ribbon = new RibbonController(application);
             _ribbon.Build();
@@ -79,7 +78,6 @@ public sealed class RevitMcpApp : IExternalApplication
         try
         {
             Disconnect();
-            application.DialogBoxShowing -= FailuresGuard.OnDialogBoxShowing;
             _dispatcher?.Dispose();
             AppDomain.CurrentDomain.AssemblyResolve -= OnAssemblyResolve;
             Instance = null;
