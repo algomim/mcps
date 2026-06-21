@@ -239,6 +239,18 @@ public class ArchitectureGuardTests
     }
 
     [Fact]
+    public void RevitInstallerPlacesRevit2027AllUserManifestUnderProgramFiles()
+    {
+        var root = FindRepositoryRoot();
+        var installer = File.ReadAllText(Path.Combine(root, "installer", "revit-mcp.wxs"));
+
+        Assert.Contains("<StandardDirectory Id=\"ProgramFiles64Folder\">", installer);
+        Assert.Contains("<Directory Id=\"ProgramFilesRevitAddins2027\" Name=\"2027\">", installer);
+        Assert.Contains("<Component Id=\"Addin2027\" Directory=\"ProgramFilesRevitAddins2027\">", installer);
+        Assert.DoesNotContain("<Directory Id=\"Addins2027\" Name=\"2027\">", installer);
+    }
+
+    [Fact]
     public void RevitInstallerDoesNotCopyAddinManifestsIntoPluginPayloadFolders()
     {
         var root = FindRepositoryRoot();
