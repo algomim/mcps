@@ -61,7 +61,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) {
             dotnet tool update --global wix --version 5.0.2
           }
-          wix extension add WixToolset.UI.wixext --global
+          wix extension add WixToolset.UI.wixext/5.0.2 --global
 
       - name: Build cloud-safe Revit MSI
         shell: pwsh
