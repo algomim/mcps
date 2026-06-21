@@ -77,8 +77,8 @@ jobs:
 
           $assetNames = @($release.assets | ForEach-Object { $_.name })
           $requiredPatterns = @()
-          foreach ($host in @($config.releaseSupportedHosts)) {
-            foreach ($artifact in @($host.artifacts)) {
+          foreach ($hostConfig in @($config.releaseSupportedHosts)) {
+            foreach ($artifact in @($hostConfig.artifacts)) {
               $requiredPatterns += $artifact.assetPattern.Replace("{version}", $env:VERSION)
               $requiredPatterns += $artifact.checksumPattern.Replace("{version}", $env:VERSION)
             }
@@ -111,8 +111,8 @@ jobs:
             return $matches[0]
           }
 
-          foreach ($host in @($config.releaseSupportedHosts)) {
-            foreach ($artifact in @($host.artifacts)) {
+          foreach ($hostConfig in @($config.releaseSupportedHosts)) {
+            foreach ($artifact in @($hostConfig.artifacts)) {
               $assetPattern = $artifact.assetPattern.Replace("{version}", $env:VERSION)
               $checksumPattern = $artifact.checksumPattern.Replace("{version}", $env:VERSION)
               $asset = Find-ReleaseAsset -Pattern $assetPattern
